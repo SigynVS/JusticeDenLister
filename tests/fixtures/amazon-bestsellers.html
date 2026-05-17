@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head><title>Amazon Best Sellers: Electronics</title></head>
+<body>
+<!-- Mimics the [data-asin] list structure Amazon uses on Best Sellers pages -->
+<ol id="zg-ordered-list">
+  <li data-asin="B08N5LNQCX">
+    <div class="zg-grid-general-faceout">
+      <img alt="Echo Dot 5th Gen Smart Speaker with Alexa"
+           src="https://m.media-amazon.com/images/I/71T4_U9amIL._AC_UL300_SR300,200_.jpg">
+      <span class="p13n-sc-price">$49.99</span>
+    </div>
+  </li>
+  <li data-asin="B08MQLJX9H">
+    <div class="zg-grid-general-faceout">
+      <img alt="Kindle Paperwhite 11th Gen E-Reader 8GB"
+           src="https://m.media-amazon.com/images/I/51z5mU7BPRL._AC_UL300_SR300,200_.jpg">
+      <span class="p13n-sc-price">$139.99</span>
+    </div>
+  </li>
+  <li data-asin="B09B8YWXDF">
+    <div class="zg-grid-general-faceout">
+      <img alt="Fire TV Stick 4K Streaming Device"
+           src="https://m.media-amazon.com/images/I/61VJHAiIEFL._AC_UL300_SR300,200_.jpg">
+      <!-- No price — tests graceful null handling -->
+    </div>
+  </li>
+  <!-- Duplicate ASIN — should be deduplicated -->
+  <li data-asin="B08N5LNQCX">
+    <img alt="Echo Dot duplicate" src="https://m.media-amazon.com/images/I/dupe._AC_UL300_.jpg">
+  </li>
+  <!-- Short alt text — should be skipped -->
+  <li data-asin="B000000001">
+    <img alt="---" src="https://m.media-amazon.com/images/I/short._AC_.jpg">
+  </li>
+</ol>
+</body>
+</html>

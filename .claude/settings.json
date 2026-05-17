@@ -1,0 +1,17 @@
+{
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "shell": "powershell",
+            "command": "$port = 3000; $inUse = Get-NetTCPConnection -LocalPort $port -State Listen -ErrorAction SilentlyContinue; if ($inUse) { Write-Output '{\"systemMessage\": \"Justice Den server already running on :3000\"}' } else { Start-Process -FilePath 'node' -ArgumentList 'server.js' -WorkingDirectory 'C:\\Users\\scoot\\JusticeDenLister' -WindowStyle Hidden; Start-Sleep -Seconds 2; $check = Get-NetTCPConnection -LocalPort $port -State Listen -ErrorAction SilentlyContinue; if ($check) { Write-Output '{\"systemMessage\": \"Justice Den server started on http://localhost:3000\"}' } else { Write-Output '{\"systemMessage\": \"Warning: server may not have started — check manually\"}' } }",
+            "timeout": 15,
+            "statusMessage": "Starting Justice Den server..."
+          }
+        ]
+      }
+    ]
+  }
+}

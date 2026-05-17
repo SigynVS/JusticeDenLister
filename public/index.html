@@ -1,0 +1,2431 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Justice Den Lister</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:Arial,sans-serif;background:#1a1a2e;color:#eee}
+header{background:#16213e;padding:20px 40px;border-bottom:2px solid #e94560}
+header h1{color:#e94560;font-size:24px}
+header p{color:#aaa;font-size:13px}
+.container{max-width:1100px;margin:30px auto;padding:0 20px}
+.tabs{display:flex;gap:10px;margin-bottom:25px;flex-wrap:wrap}
+.tab{padding:10px 24px;border-radius:6px;border:none;cursor:pointer;font-size:14px;background:#16213e;color:#aaa}
+.tab.active{background:#e94560;color:white}
+.panel{display:none}
+.panel.active{display:block}
+.card{background:#16213e;border-radius:10px;padding:25px;margin-bottom:20px}
+.card h2{font-size:16px;margin-bottom:20px;color:#e94560}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:15px}
+.form-group{display:flex;flex-direction:column;gap:6px}
+.form-group.full{grid-column:1/-1}
+label{font-size:12px;color:#aaa;text-transform:uppercase}
+input,select,textarea{background:#1a1a2e;border:1px solid #333;border-radius:6px;padding:10px 12px;color:#eee;font-size:14px;width:100%}
+textarea{height:120px;resize:vertical}
+.btn{padding:12px 24px;border-radius:6px;border:none;cursor:pointer;font-size:14px;font-weight:bold;margin-right:8px}
+.btn-primary{background:#e94560;color:white}
+.btn-secondary{background:#0f3460;color:white}
+.btn-green{background:#4ecca3;color:#1a1a2e}
+.btn:hover{opacity:0.9}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:15px;margin-bottom:25px}
+.stat{background:#16213e;border-radius:10px;padding:20px;text-align:center}
+.stat h3{font-size:28px;color:#e94560}
+.stat p{font-size:12px;color:#aaa;margin-top:5px}
+.item-card{background:#0f3460;border-radius:8px;padding:12px;margin-top:10px}
+.item-card h4{font-size:13px;color:#eee;margin-bottom:5px}
+.item-card p{font-size:12px;color:#4ecca3}
+.search-row{display:flex;gap:10px;margin-bottom:15px}
+.search-row input{flex:1}
+.walmart-result{background:#0f3460;border-radius:10px;padding:20px;margin-top:15px}
+.walmart-result h3{color:#4ecca3;margin-bottom:10px;font-size:15px}
+.price-row{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:15px 0}
+.price-item{background:#1a1a2e;border-radius:8px;padding:12px;text-align:center}
+.price-item p{font-size:11px;color:#aaa;margin-bottom:4px}
+.price-item h4{font-size:18px;color:#4ecca3}
+.template-btn{padding:8px 16px;background:#0f3460;border:1px solid #e94560;border-radius:6px;color:#e94560;cursor:pointer;font-size:13px;margin-right:8px;margin-bottom:8px}
+.template-btn:hover{background:#e94560;color:white}
+</style>
+</head>
+<body>
+<header>
+<h1>Justice Den Lister</h1>
+<p>eBay Listing Management Tool</p>
+</header>
+<div class="container">
+<div class="tabs">
+<button class="tab active" onclick="showTab('dashboard',this)">Dashboard</button>
+<button class="tab" onclick="showTab('walmart',this)">Walmart Importer</button>
+<button class="tab" onclick="showTab('amazon',this)">Amazon Importer</button>
+<button class="tab" onclick="showTab('finder',this)">Product Finder</button>
+<button class="tab" onclick="showTab('research',this)">Product Research</button>
+<button class="tab" onclick="showTab('create',this)">Create Listing</button>
+<button class="tab" onclick="showTab('calculator',this)">Profit Calculator</button>
+<button class="tab" onclick="showTab('templates',this)">Templates</button>
+<button class="tab" onclick="showTab('images',this);loadGallery()">Images</button>
+<button class="tab" onclick="showTab('mylistings',this);loadMyListings()">My Listings</button>
+<button class="tab" onclick="showTab('orders',this);loadOrders()">📦 Orders</button>
+<button class="tab" onclick="showTab('activity',this);loadActivity()">📋 Activity</button>
+<button class="tab" onclick="showTab('profit',this);loadProfitSummary()">💰 Profit</button>
+<button class="tab" onclick="showTab('setup',this);loadSetupStatus();loadHealth()">⚙️ Setup</button>
+</div>
+
+<div id="dashboard" class="panel active">
+<div class="stats">
+<div class="stat"><h3 id="dash-listings">—</h3><p>Active Listings</p></div>
+<div class="stat"><h3 id="dash-value">—</h3><p>Total Value</p></div>
+<div class="stat"><h3>justicedenco</h3><p>Store Name</p></div>
+</div>
+<div class="card">
+<h2>Welcome to Justice Den Lister</h2>
+<p style="color:#aaa;font-size:14px;line-height:2">
+✅ eBay API connected<br>
+✅ Walmart Importer ready<br>
+✅ Product Research ready<br>
+✅ Listing Templates loaded<br>
+✅ Profit Calculator ready
+</p>
+</div>
+</div>
+
+<div id="walmart" class="panel">
+<div class="card">
+<h2>Walmart to eBay Importer</h2>
+<p style="color:#aaa;font-size:13px;margin-bottom:15px">Paste any Walmart product URL to generate an optimized eBay listing</p>
+<div class="search-row">
+<input type="text" id="walmart-url" placeholder="https://www.walmart.com/ip/Product-Name/1234567890"/>
+<button class="btn btn-primary" onclick="importWalmart()">Import</button>
+</div>
+<div id="walmart-loading" style="display:none;color:#aaa;margin-top:10px;font-size:13px">Loading product data...</div>
+<div id="walmart-error" style="display:none;color:#e94560;margin-top:10px;font-size:13px"></div>
+<div id="walmart-result" style="display:none">
+<div class="walmart-result">
+<h3 id="w-title"></h3>
+<div class="price-row">
+<div class="price-item"><p>Walmart Price</p><h4 id="w-price"></h4></div>
+<div class="price-item"><p>Suggested eBay Price</p><h4 id="w-ebay-price"></h4></div>
+<div class="price-item"><p>Est. Profit</p><h4 id="w-profit"></h4></div>
+</div>
+<div style="margin:12px 0 6px 0;background:#1a1a2e;border-radius:8px;padding:12px">
+  <label style="font-size:11px;color:#aaa;text-transform:uppercase;display:block;margin-bottom:8px">Product Image</label>
+  <div style="display:flex;gap:8px;align-items:center;margin-bottom:8px">
+    <input type="text" id="walmart-image-url" placeholder="Paste image URL (right-click → Copy image address)" style="flex:1;padding:8px;background:#0f3460;border:1px solid #333;border-radius:6px;color:#fff;font-size:12px"/>
+  </div>
+  <div style="display:flex;gap:8px;align-items:center">
+    <input type="file" id="walmart-image-file" accept="image/*" style="color:#aaa;font-size:12px;flex:1"/>
+    <button onclick="uploadWalmartImage()" style="background:#0f3460;border:1px solid #4ecca3;color:#4ecca3;padding:7px 14px;border-radius:6px;cursor:pointer;font-size:12px;white-space:nowrap">Upload</button>
+  </div>
+  <div id="walmart-img-status" style="display:none;font-size:11px;margin-top:6px;color:#aaa"></div>
+</div>
+<button class="btn btn-green" onclick="sendToListing()" style="margin-top:6px">Send to Listing Form →</button>
+</div>
+</div>
+</div>
+
+<div class="card">
+<h2>Bulk Import</h2>
+<p style="color:#aaa;font-size:13px;margin-bottom:12px">Paste multiple Walmart URLs (one per line) to queue them all at once</p>
+<textarea id="bulk-urls" style="height:90px;font-size:12px;font-family:monospace" placeholder="https://www.walmart.com/ip/Product-1/123456&#10;https://www.walmart.com/ip/Product-2/789012&#10;..."></textarea>
+<div style="display:flex;gap:8px;margin-top:10px;align-items:center;flex-wrap:wrap">
+  <button class="btn btn-primary" onclick="bulkImportAll()">Import All</button>
+  <button id="bulk-queue-btn" onclick="bulkAddAllToQueue()" style="display:none;background:#16213e;border:1px solid #4ecca3;color:#4ecca3;padding:12px 24px;border-radius:6px;cursor:pointer;font-size:14px;font-weight:bold">Add All With Images to Queue</button>
+</div>
+<div id="bulk-results" style="margin-top:15px"></div>
+</div>
+</div>
+
+<div id="amazon" class="panel">
+<div class="card">
+<h2>Amazon to eBay Importer</h2>
+<p style="color:#aaa;font-size:13px;margin-bottom:15px">Paste any Amazon product URL to generate an optimized eBay listing. Images are pulled automatically.</p>
+<div class="search-row">
+<input type="text" id="amazon-url" placeholder="https://www.amazon.com/dp/B08XYZ1234"/>
+<button class="btn btn-primary" onclick="importAmazon()">Import</button>
+</div>
+<div id="amazon-loading" style="display:none;color:#aaa;margin-top:10px;font-size:13px">Loading product data...</div>
+<div id="amazon-error" style="display:none;color:#e94560;margin-top:10px;font-size:13px"></div>
+<div id="amazon-result" style="display:none">
+<div class="walmart-result">
+<div style="display:flex;gap:14px;align-items:flex-start;margin-bottom:10px">
+  <img id="az-thumb" src="" alt="" style="width:80px;height:80px;object-fit:cover;border-radius:6px;border:1px solid #4ecca3;display:none;flex-shrink:0"/>
+  <h3 id="az-title" style="flex:1;font-size:14px;line-height:1.4"></h3>
+</div>
+<div class="price-row">
+<div class="price-item"><p>Amazon Price</p><h4 id="az-price"></h4></div>
+<div class="price-item"><p>Suggested eBay Price</p><h4 id="az-ebay-price"></h4></div>
+<div class="price-item"><p>Est. Profit</p><h4 id="az-profit"></h4></div>
+</div>
+<div id="az-safety-banner" style="display:none;border-radius:6px;padding:10px 12px;font-size:13px;margin-bottom:8px"></div>
+<div id="az-img-status" style="font-size:12px;color:#4ecca3;margin-bottom:10px;display:none"></div>
+<button class="btn btn-green" onclick="sendAmazonToListing()" style="margin-top:6px">Send to Listing Form →</button>
+</div>
+</div>
+</div>
+<div class="card">
+<h2>Bulk Import</h2>
+<p style="color:#aaa;font-size:13px;margin-bottom:12px">Paste multiple Amazon URLs (one per line)</p>
+<textarea id="amazon-bulk-urls" style="height:90px;font-size:12px;font-family:monospace" placeholder="https://www.amazon.com/dp/B08XYZ1234&#10;https://www.amazon.com/dp/B09ABC5678&#10;..."></textarea>
+<div style="display:flex;gap:8px;margin-top:10px;align-items:center;flex-wrap:wrap">
+  <button class="btn btn-primary" onclick="amazonBulkImportAll()">Import All</button>
+  <button id="amazon-bulk-queue-btn" onclick="amazonBulkAddAllToQueue()" style="display:none;background:#16213e;border:1px solid #4ecca3;color:#4ecca3;padding:12px 24px;border-radius:6px;cursor:pointer;font-size:14px;font-weight:bold">Add All to Queue</button>
+</div>
+<div id="amazon-bulk-results" style="margin-top:15px"></div>
+</div>
+</div>
+
+<div id="finder" class="panel">
+<div class="card">
+<h2>Product Finder</h2>
+
+<!-- Mode toggle -->
+<div style="display:flex;gap:0;margin-bottom:16px;border-radius:8px;overflow:hidden;border:1px solid #333;width:fit-content">
+  <button id="finder-mode-amazon" onclick="setFinderMode('amazon')" style="padding:8px 20px;background:#e94560;color:white;border:none;cursor:pointer;font-size:13px;font-weight:bold">📦 Amazon Best Sellers</button>
+  <button id="finder-mode-tiktok" onclick="setFinderMode('tiktok')" style="padding:8px 20px;background:#16213e;color:#aaa;border:none;cursor:pointer;font-size:13px;font-weight:bold">📈 Amazon Movers</button>
+</div>
+
+<!-- Amazon category buttons -->
+<div id="finder-cats-amazon" style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:6px">
+  <span style="font-size:10px;color:#555;text-transform:uppercase;letter-spacing:1px;align-self:center;width:100%;margin-bottom:2px">⚡ Electronics & Tech</span>
+  <button class="template-btn" onclick="loadFinderCategory('electronics')">Electronics</button>
+  <button class="template-btn" onclick="loadFinderCategory('smarthome')">Smart Home</button>
+  <button class="template-btn" onclick="loadFinderCategory('computers')">Computer Accessories</button>
+  <button class="template-btn" onclick="loadFinderCategory('audio')">Headphones & Audio</button>
+  <button class="template-btn" onclick="loadFinderCategory('wearables')">Smart Watches</button>
+  <button class="template-btn" onclick="loadFinderCategory('cameras')">Security Cameras</button>
+  <button class="template-btn" onclick="loadFinderCategory('pcgaming')">PC Gaming</button>
+  <button class="template-btn" onclick="loadFinderCategory('office')">Office Electronics</button>
+  <span style="font-size:10px;color:#555;text-transform:uppercase;letter-spacing:1px;align-self:center;width:100%;margin-top:6px;margin-bottom:2px">🏠 Home & Living</span>
+  <button class="template-btn" onclick="loadFinderCategory('home')">Home & Kitchen</button>
+  <button class="template-btn" onclick="loadFinderCategory('tools')">Tools</button>
+  <button class="template-btn" onclick="loadFinderCategory('patio')">Patio & Garden</button>
+  <button class="template-btn" onclick="loadFinderCategory('lighting')">Lighting</button>
+  <span style="font-size:10px;color:#555;text-transform:uppercase;letter-spacing:1px;align-self:center;width:100%;margin-top:6px;margin-bottom:2px">📦 More Categories</span>
+  <button class="template-btn" onclick="loadFinderCategory('sports')">Sports & Outdoors</button>
+  <button class="template-btn" onclick="loadFinderCategory('health')">Health</button>
+  <button class="template-btn" onclick="loadFinderCategory('toys')">Toys & Games</button>
+  <button class="template-btn" onclick="loadFinderCategory('automotive')">Automotive</button>
+  <button class="template-btn" onclick="loadFinderCategory('pet')">Pet Supplies</button>
+  <button class="template-btn" onclick="loadFinderCategory('baby')">Baby</button>
+</div>
+<div style="margin-bottom:10px"></div>
+
+<!-- TikTok category buttons -->
+<div id="finder-cats-tiktok" style="display:none;gap:8px;flex-wrap:wrap;margin-bottom:16px">
+  <button class="template-btn" onclick="loadTikTokTrends('all')">🔥 All Trending</button>
+  <button class="template-btn" onclick="loadTikTokTrends('gadgets')">📱 Gadgets</button>
+  <button class="template-btn" onclick="loadTikTokTrends('kitchen')">🍳 Kitchen</button>
+  <button class="template-btn" onclick="loadTikTokTrends('home')">🏠 Home & Decor</button>
+  <button class="template-btn" onclick="loadTikTokTrends('beauty')">💄 Beauty</button>
+  <button class="template-btn" onclick="loadTikTokTrends('fitness')">💪 Fitness</button>
+  <button class="template-btn" onclick="loadTikTokTrends('cleaning')">🧹 Cleaning</button>
+  <button class="template-btn" onclick="loadTikTokTrends('organization')">🗂️ Organization</button>
+</div>
+
+<!-- TikTok info banner (shown in tiktok mode) -->
+<div id="finder-tiktok-banner" style="display:none;background:#0a1628;border:1px solid #4ecca3;border-radius:8px;padding:10px 14px;margin-bottom:14px;font-size:12px;color:#4ecca3">
+  📈 Amazon Movers &amp; Shakers — fast-rising products with high resell potential. Cache refreshes every 30 min.
+</div>
+
+<!-- Filter bar -->
+<div style="display:flex;align-items:center;gap:18px;flex-wrap:wrap;padding:12px 16px;background:#0f3460;border-radius:8px;margin-bottom:14px">
+  <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px;color:#eee;text-transform:none">
+    <input type="checkbox" id="finder-hide-blocked" checked onchange="renderFinderResults()" style="width:16px;height:16px;accent-color:#4ecca3;cursor:pointer"/>
+    🛡️ Hide risks
+  </label>
+  <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px;color:#eee;text-transform:none">
+    <input type="checkbox" id="finder-hide-listed" checked onchange="renderFinderResults()" style="width:16px;height:16px;accent-color:#4ecca3;cursor:pointer"/>
+    📦 Hide already listed
+  </label>
+  <label style="display:flex;align-items:center;gap:8px;font-size:13px;color:#eee;text-transform:none">
+    💰 Min profit
+    <input type="number" id="finder-min-profit" value="5" min="0" step="1"
+      oninput="renderFinderResults()"
+      style="width:64px;padding:4px 8px;background:#1a1a2e;border:1px solid #333;border-radius:5px;color:#4ecca3;font-size:13px;font-weight:bold"/>
+    <span style="color:#aaa">$</span>
+  </label>
+  <span id="finder-count" style="font-size:12px;color:#aaa"></span>
+  <div style="margin-left:auto;display:flex;gap:8px;align-items:center">
+    <button onclick="selectAllFinder()" style="background:none;border:1px solid #4ecca3;color:#4ecca3;padding:4px 10px;border-radius:5px;cursor:pointer;font-size:12px">☑ Select All</button>
+    <button id="finder-import-btn" onclick="finderBulkImport()" style="background:#4ecca3;color:#1a1a2e;border:none;padding:4px 12px;border-radius:5px;cursor:pointer;font-size:12px;font-weight:bold;display:none">📥 Import Selected (0)</button>
+    <button onclick="toggleBlockRules()" style="background:none;border:1px solid #555;color:#aaa;padding:4px 10px;border-radius:5px;cursor:pointer;font-size:12px">⚙️ Block Rules</button>
+  </div>
+</div>
+
+<!-- Bulk import progress -->
+<div id="finder-bulk-progress" style="display:none;background:#0a1628;border:1px solid #4ecca3;border-radius:8px;padding:12px 16px;margin-bottom:14px">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+    <span style="font-size:13px;color:#4ecca3;font-weight:bold">📥 Importing products to queue...</span>
+    <span id="finder-bulk-status" style="font-size:12px;color:#aaa">0 / 0</span>
+  </div>
+  <div style="background:#1a1a2e;border-radius:4px;height:8px">
+    <div id="finder-bulk-bar" style="background:#4ecca3;height:8px;border-radius:4px;width:0%;transition:width 0.3s"></div>
+  </div>
+  <div id="finder-bulk-log" style="margin-top:8px;font-size:11px;color:#aaa;max-height:80px;overflow-y:auto"></div>
+</div>
+
+<!-- Block rules manager (hidden by default) -->
+<div id="block-rules-panel" style="display:none;background:#0a0a1a;border:1px solid #333;border-radius:8px;padding:16px;margin-bottom:14px">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+    <span style="font-size:13px;font-weight:bold;color:#eee">⚙️ Block Rules</span>
+    <span style="font-size:11px;color:#aaa">These save automatically. Blocked products are hidden from results.</span>
+  </div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+    <!-- Brands -->
+    <div>
+      <div style="font-size:11px;color:#aaa;margin-bottom:6px;text-transform:uppercase;letter-spacing:1px">🚫 Blocked Brands</div>
+      <div id="bl-brands" style="font-size:12px;color:#eee;min-height:28px;margin-bottom:8px"></div>
+      <div style="display:flex;gap:6px">
+        <input type="text" id="bl-brand-input" placeholder="e.g. anker" style="flex:1;padding:6px 8px;font-size:12px;background:#1a1a2e;border:1px solid #333;border-radius:5px;color:#eee"/>
+        <button onclick="addBlockRule('brands','bl-brand-input')" style="background:#e94560;border:none;color:white;padding:6px 10px;border-radius:5px;cursor:pointer;font-size:12px">Add</button>
+      </div>
+    </div>
+    <!-- Keywords -->
+    <div>
+      <div style="font-size:11px;color:#aaa;margin-bottom:6px;text-transform:uppercase;letter-spacing:1px">🚫 Blocked Keywords</div>
+      <div id="bl-keywords" style="font-size:12px;color:#eee;min-height:28px;margin-bottom:8px"></div>
+      <div style="display:flex;gap:6px">
+        <input type="text" id="bl-keyword-input" placeholder="e.g. refurbished" style="flex:1;padding:6px 8px;font-size:12px;background:#1a1a2e;border:1px solid #333;border-radius:5px;color:#eee"/>
+        <button onclick="addBlockRule('keywords','bl-keyword-input')" style="background:#e94560;border:none;color:white;padding:6px 10px;border-radius:5px;cursor:pointer;font-size:12px">Add</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="finder-loading" style="display:none;color:#aaa;font-size:13px;margin-bottom:12px">⏳ Fetching best sellers...</div>
+<div id="finder-error" style="display:none;color:#e94560;font-size:13px;margin-bottom:12px"></div>
+<div id="finder-results" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px"></div>
+</div>
+</div>
+
+<div id="research" class="panel">
+<div class="card">
+<h2>Product Research</h2>
+<div class="search-row">
+<input type="text" id="search-q" placeholder="Search eBay products..."/>
+<button class="btn btn-primary" onclick="searchProducts()">Search</button>
+</div>
+<div id="research-stats" style="display:none;margin-bottom:15px">
+<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px">
+<div class="stat"><h3 id="r-total">-</h3><p>Total Listings</p></div>
+<div class="stat"><h3 id="r-avg">-</h3><p>Avg Price</p></div>
+<div class="stat"><h3 id="r-min">-</h3><p>Min Price</p></div>
+<div class="stat"><h3 id="r-max">-</h3><p>Max Price</p></div>
+</div>
+</div>
+<div id="research-results"></div>
+</div>
+</div>
+
+<div id="create" class="panel">
+<div class="card">
+<h2>Create New eBay Listing</h2>
+<div class="form-grid">
+<div class="form-group full">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+    <label style="margin:0">Title (80 chars max) <span id="title-char-count" style="color:#555;font-weight:normal;font-size:11px">0/80</span></label>
+    <button onclick="scoreSeoTitle()" style="background:#16213e;border:1px solid #4ecca3;color:#4ecca3;padding:5px 10px;border-radius:6px;cursor:pointer;font-size:11px;white-space:nowrap">🔍 Score SEO</button>
+  </div>
+  <input type="text" id="title" maxlength="80" placeholder="Product title..." onblur="checkDuplicateFromField()" oninput="updateCharCount()"/>
+</div>
+<div id="seo-result" style="display:none;grid-column:1/-1;background:#0f3460;border-radius:6px;padding:12px;font-size:13px"></div>
+<div id="dup-warning" style="display:none;grid-column:1/-1;background:#2a1800;border:1px solid #f5a623;border-radius:6px;padding:12px;font-size:13px;color:#f5a623"></div>
+<div class="form-group full">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+    <label style="margin:0">Description</label>
+    <button onclick="generateHTMLDesc()" style="background:#16213e;border:1px solid #4ecca3;color:#4ecca3;padding:5px 10px;border-radius:6px;cursor:pointer;font-size:11px;white-space:nowrap">✨ Generate HTML Description</button>
+  </div>
+  <textarea id="description" placeholder="Product description..."></textarea>
+  <div id="desc-notice" style="display:none;font-size:11px;color:#4ecca3;margin-top:4px">✅ HTML description generated — eBay will render it with formatting in your listing.</div>
+</div>
+<div class="form-group">
+  <label>Price ($) <span id="price-preset-label" style="color:#555;font-weight:normal;font-size:11px;text-transform:none"></span></label>
+  <input type="number" id="price" placeholder="39.99"/>
+  <div style="display:flex;gap:6px;margin-top:6px">
+    <button type="button" onclick="applyMarginPreset(1.7,'Safe')" style="flex:1;background:#16213e;border:1px solid #4ecca3;color:#4ecca3;padding:5px 0;border-radius:5px;cursor:pointer;font-size:11px;font-weight:bold">🟢 Safe 1.7×</button>
+    <button type="button" onclick="applyMarginPreset(1.55,'Mid')" style="flex:1;background:#16213e;border:1px solid #f5a623;color:#f5a623;padding:5px 0;border-radius:5px;cursor:pointer;font-size:11px;font-weight:bold">🟡 Mid 1.55×</button>
+    <button type="button" onclick="applyMarginPreset(1.35,'Deal')" style="flex:1;background:#16213e;border:1px solid #e94560;color:#e94560;padding:5px 0;border-radius:5px;cursor:pointer;font-size:11px;font-weight:bold">🔴 Deal 1.35×</button>
+  </div>
+  <input type="hidden" id="amazon-cost"/>
+</div>
+<div class="form-group"><label>Quantity</label><input type="number" id="quantity" value="1"/></div>
+<div class="form-group full">
+  <label>Category ID</label>
+  <div style="display:flex;gap:8px;align-items:center">
+    <input type="text" id="category" placeholder="auto-detect if blank" style="flex:1"/>
+    <button onclick="findCategory()" style="background:#16213e;border:1px solid #4ecca3;color:#4ecca3;padding:8px 12px;border-radius:6px;cursor:pointer;font-size:12px;white-space:nowrap">Find Category</button>
+  </div>
+  <div id="category-suggestions" style="display:none;background:#0f3460;border-radius:6px;padding:8px;margin-top:6px;font-size:12px"></div>
+</div>
+<div class="form-group"><label>Type</label><input type="text" id="type" placeholder="e.g. Electric, Wireless, Standard"/></div>
+<div class="form-group full">
+  <label>Product Image</label>
+  <div style="background:#0f3460;border-radius:8px;padding:12px;display:flex;align-items:center;gap:12px">
+    <img id="listing-img-thumb" src="" alt="" style="width:64px;height:64px;object-fit:cover;border-radius:6px;border:1px solid #4ecca3;display:none;flex-shrink:0"/>
+    <div style="flex:1;min-width:0">
+      <div id="listing-img-label" style="color:#aaa;font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">No image selected — go to Images tab to re-host or upload</div>
+      <input type="hidden" id="imageUrl"/>
+    </div>
+    <button onclick="goPickImage()" style="background:#16213e;border:1px solid #4ecca3;color:#4ecca3;padding:8px 12px;border-radius:6px;cursor:pointer;font-size:12px;white-space:nowrap;flex-shrink:0">Pick Image →</button>
+  </div>
+</div>
+<div class="form-group"><label>Weight (lbs)</label><input type="number" id="weight" placeholder="1" value="1" step="0.1" min="0.1"/></div>
+<div class="form-group"><label>MPN</label><input type="text" id="mpn" placeholder="Does Not Apply" value="Does Not Apply"/></div>
+<div class="form-group"><label>Country of Manufacture</label><input type="text" id="countryMfg" placeholder="China" value="China"/></div>
+<div class="form-group"><label>UPC / EAN (optional)</label><input type="text" id="upc" placeholder="Leave blank if none"/></div>
+<div class="form-group"><label>Condition</label><select id="condition"><option value="NEW">New</option><option value="LIKE_NEW">Like New</option><option value="USED_EXCELLENT">Used - Excellent</option></select></div>
+<div class="form-group full">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+    <label style="margin:0">Item Specifics (one per line: Key=Value)</label>
+    <button onclick="checkRequiredAspects()" style="background:#16213e;border:1px solid #4ecca3;color:#4ecca3;padding:5px 10px;border-radius:6px;cursor:pointer;font-size:11px;white-space:nowrap">Check Required for Category</button>
+  </div>
+  <textarea id="itemSpecifics" style="height:90px" placeholder="Band Material=Silicone&#10;Connectivity Technology=Wireless&#10;Compatible OS=Android, iOS"></textarea>
+  <div id="aspects-status" style="font-size:11px;color:#aaa;margin-top:4px;display:none"></div>
+</div>
+</div>
+<br>
+<input type="hidden" id="edit-sku" value=""/>
+<input type="hidden" id="edit-offer-id" value=""/>
+<input type="hidden" id="asin" value=""/>
+<div id="edit-mode-banner" style="display:none;background:#16213e;border:1px solid #4ecca3;border-radius:6px;padding:10px 14px;margin-bottom:10px;color:#4ecca3;font-size:13px;display:flex;justify-content:space-between;align-items:center">
+  <span>Editing: <strong id="edit-mode-sku-label"></strong></span>
+  <button onclick="cancelEdit()" style="background:none;border:1px solid #e94560;color:#e94560;padding:4px 10px;border-radius:4px;cursor:pointer;font-size:12px">Cancel Edit</button>
+</div>
+<div id="preflight-result" style="display:none;border-radius:6px;padding:10px 14px;font-size:13px;margin-bottom:10px"></div>
+<div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+  <button class="btn btn-primary" id="listing-submit-btn" onclick="submitListing()">Create Listing on eBay</button>
+  <button class="btn btn-secondary" id="queue-add-btn" onclick="addToQueue()">+ Add to Queue</button>
+</div>
+<div id="create-output" style="background:#0f3460;border-radius:8px;padding:15px;margin-top:15px;font-size:12px;color:#4ecca3;white-space:pre-wrap;display:none;max-height:300px;overflow-y:auto"></div>
+
+<div id="queue-section" style="display:none;margin-top:24px;border-top:2px solid #16213e;padding-top:20px">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+    <h3 style="color:#4ecca3;font-size:15px;margin:0">Queue — <span id="queue-count">0</span> items ready to list</h3>
+    <div style="display:flex;gap:8px">
+      <button class="btn btn-green" onclick="listAllQueued()">List All on eBay</button>
+      <button id="queue-undo-btn" onclick="undoQueue()" style="display:none;background:none;border:1px solid #4ecca3;color:#4ecca3;padding:6px 14px;border-radius:6px;cursor:pointer;font-size:13px">↩ Undo</button>
+      <button onclick="removeBlocklistedFromQueue()" style="background:none;border:1px solid #f0a500;color:#f0a500;padding:6px 14px;border-radius:6px;cursor:pointer;font-size:13px" title="Remove items matching your blocklist (brands/keywords)">🚫 Remove Risky</button>
+      <button onclick="clearQueue()" style="background:none;border:1px solid #e94560;color:#e94560;padding:6px 14px;border-radius:6px;cursor:pointer;font-size:13px">Clear All</button>
+    </div>
+  </div>
+  <div id="queue-list" style="margin-bottom:12px"></div>
+  <div id="queue-progress" style="display:none;background:#0f3460;border-radius:8px;padding:12px;font-size:12px;max-height:300px;overflow-y:auto"></div>
+</div>
+</div>
+</div>
+
+<div id="calculator" class="panel">
+<div class="card">
+<h2>Profit Calculator</h2>
+<div class="form-grid">
+<div class="form-group"><label>Your Cost ($)</label><input type="number" id="cost" placeholder="0.00" oninput="calculate()"/></div>
+<div class="form-group"><label>eBay Sale Price ($)</label><input type="number" id="sale-price" placeholder="0.00" oninput="calculate()"/></div>
+<div class="form-group"><label>Shipping Cost ($)</label><input type="number" id="shipping" placeholder="0.00" oninput="calculate()"/></div>
+<div class="form-group"><label>eBay Fee %</label><input type="number" id="fee-pct" value="13.25" oninput="calculate()"/></div>
+</div>
+<div style="background:#0f3460;border-radius:8px;padding:15px;margin-top:15px">
+<p style="font-size:13px;color:#aaa;margin-bottom:5px">Estimated Profit</p>
+<h3 id="profit-output" style="font-size:22px;color:#4ecca3">$0.00</h3>
+<p id="margin-output" style="margin-top:8px;font-size:13px;color:#aaa">Margin: 0%</p>
+</div>
+</div>
+</div>
+
+<div id="templates" class="panel">
+<div class="card">
+<h2>Quick Templates</h2>
+<button class="template-btn" onclick="loadTemplate('airduster')">Electric Air Duster</button>
+<button class="template-btn" onclick="loadTemplate('bluetooth')">Bluetooth Speaker</button>
+<button class="template-btn" onclick="loadTemplate('earbuds')">Wireless Earbuds</button>
+<button class="template-btn" onclick="loadTemplate('smartwatch')">Smartwatch</button>
+<button class="template-btn" onclick="loadTemplate('firepit')">Fire Pit</button>
+<button class="template-btn" onclick="loadTemplate('tools')">Tools</button>
+</div>
+</div>
+
+
+<div id="images" class="panel">
+<div class="card">
+<h2>Image Re-Hoster</h2>
+<p style="color:#aaa;font-size:13px">Paste any product image URL (Walmart, Amazon, anywhere). It gets re-hosted on a public CDN so eBay can display it.</p>
+<div style="display:flex;gap:10px;margin-bottom:12px">
+  <input type="text" id="image-url-input" placeholder="https://i5.walmartimages.com/..." style="flex:1;padding:10px;background:#0f3460;border:1px solid #4ecca3;border-radius:6px;color:#fff;font-size:13px"/>
+  <button class="btn btn-primary" onclick="rehostImage()">Re-host Image</button>
+</div>
+<div id="image-preview-wrap" style="display:none;margin-bottom:12px">
+  <img id="image-preview" src="" alt="Preview" style="max-width:200px;max-height:200px;border-radius:6px;border:1px solid #4ecca3"/>
+</div>
+<div id="image-result" style="display:none;background:#0f3460;border-radius:8px;padding:12px">
+  <p style="color:#4ecca3;margin:0 0 8px 0;font-size:13px">Hosted URL — ready for eBay:</p>
+  <input type="text" id="image-hosted-url" readonly style="width:100%;padding:8px;background:#1a1a2e;border:1px solid #4ecca3;border-radius:4px;color:#fff;font-size:12px;margin-bottom:8px"/>
+  <div style="display:flex;gap:8px">
+    <button class="btn btn-primary" onclick="copyHostedUrl()">Copy URL</button>
+    <button onclick="sendImageToListing()" style="background:#16213e;border:1px solid #4ecca3;color:#4ecca3;padding:8px 16px;border-radius:6px;cursor:pointer;font-size:13px">Send to Listing Form</button>
+  </div>
+</div>
+<div id="image-error" style="display:none;color:#e94560;margin-top:8px;font-size:13px"></div>
+<hr style="border-color:#1a1a2e;margin:20px 0"/>
+<p style="color:#aaa;font-size:13px">Or upload an image file directly from your computer:</p>
+<div style="display:flex;gap:10px;align-items:center">
+  <input type="file" id="image-file-input" accept="image/*" style="color:#aaa;font-size:13px"/>
+  <button class="btn btn-primary" onclick="uploadImageFile()">Upload File</button>
+</div>
+<hr style="border-color:#1a1a2e;margin:20px 0"/>
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+  <h3 style="color:#4ecca3;margin:0;font-size:15px">Hosted Image Gallery</h3>
+  <button onclick="loadGallery()" style="background:none;border:1px solid #4ecca3;color:#4ecca3;padding:4px 10px;border-radius:4px;font-size:12px;cursor:pointer">Refresh</button>
+</div>
+<div style="display:flex;gap:8px;margin-bottom:12px">
+  <input type="text" id="manual-image-url" placeholder="Paste an existing https://i.ibb.co/... URL to add to gallery" style="flex:1;padding:8px;background:#0f3460;border:1px solid #4ecca3;border-radius:6px;color:#fff;font-size:12px"/>
+  <button onclick="addToGallery()" style="background:#16213e;border:1px solid #4ecca3;color:#4ecca3;padding:8px 12px;border-radius:6px;cursor:pointer;font-size:12px;white-space:nowrap">Add to Gallery</button>
+</div>
+<div id="image-gallery" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:12px"></div>
+</div>
+</div>
+
+<div id="mylistings" class="panel">
+<div class="card">
+<h2>My Listings</h2>
+<div style="display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap">
+  <button class="btn btn-primary" onclick="loadMyListings()">Refresh (Local)</button>
+  <button onclick="syncListings()" style="background:#16213e;border:1px solid #4ecca3;color:#4ecca3;padding:8px 16px;border-radius:6px;cursor:pointer;font-size:13px">Sync with eBay</button>
+  <button onclick="cleanupUnpublished()" style="background:#16213e;border:1px solid #e94560;color:#e94560;padding:8px 16px;border-radius:6px;cursor:pointer;font-size:13px">Delete All Unpublished</button>
+</div>
+<p style="color:#555;font-size:12px;margin-bottom:10px">Refresh loads instantly from local file (0 API calls). Sync with eBay fetches live status (2 API calls).</p>
+<div id="listings-loading" style="display:none;color:#aaa;font-size:13px">Loading listings...</div>
+<div id="listings-error" style="display:none;color:#e94560;font-size:13px"></div>
+<div id="cleanup-result" style="display:none;color:#4ecca3;font-size:13px;margin-bottom:8px"></div>
+<div id="listings-table"></div>
+</div>
+
+<div class="card" style="margin-top:20px">
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+  <h2 style="margin:0">🔄 Auto-Repricer</h2>
+  <div style="display:flex;gap:8px;align-items:center">
+    <label style="font-size:13px;color:#aaa;display:flex;align-items:center;gap:6px;cursor:pointer">
+      <input type="checkbox" id="repricer-enabled" onchange="saveRepricerSettings()" style="width:16px;height:16px;cursor:pointer"/>
+      Enabled
+    </label>
+    <button onclick="runRepricer(true)" style="background:#16213e;border:1px solid #f5a623;color:#f5a623;padding:8px 14px;border-radius:6px;cursor:pointer;font-size:13px;font-weight:bold">▶ Run Now</button>
+  </div>
+</div>
+<p style="color:#aaa;font-size:13px;margin-bottom:12px">Automatically lowers prices after a set number of days with no sale. Helps win more buyers without manual work.</p>
+<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:12px">
+  <div class="form-group"><label>Drop by (%)</label><input type="number" id="repricer-drop" value="5" min="1" max="20" onchange="saveRepricerSettings()" style="background:#1a1a2e;border:1px solid #333;border-radius:6px;padding:8px;color:#eee"/></div>
+  <div class="form-group"><label>After (days with no sale)</label><input type="number" id="repricer-days" value="7" min="1" max="30" onchange="saveRepricerSettings()" style="background:#1a1a2e;border:1px solid #333;border-radius:6px;padding:8px;color:#eee"/></div>
+  <div class="form-group"><label>Floor (% of current price)</label><input type="number" id="repricer-floor" value="20" min="5" max="50" onchange="saveRepricerSettings()" style="background:#1a1a2e;border:1px solid #333;border-radius:6px;padding:8px;color:#eee"/></div>
+</div>
+<div id="repricer-status" style="display:none;font-size:13px;color:#aaa;margin-bottom:8px"></div>
+<div id="repricer-results" style="font-size:12px;max-height:200px;overflow-y:auto"></div>
+</div>
+
+<div class="card" style="margin-top:20px">
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+  <h2 style="margin:0">💰 Price Watch</h2>
+  <div style="display:flex;gap:8px;flex-wrap:wrap">
+    <button onclick="backfillAsins()" style="background:#16213e;border:1px solid #f5a623;color:#f5a623;padding:8px 14px;border-radius:6px;cursor:pointer;font-size:13px;font-weight:bold">🔍 Find Missing ASINs</button>
+    <button class="btn btn-primary" onclick="runPriceWatch()">Check Amazon Prices</button>
+    <button onclick="runStockCheck()" style="background:#16213e;border:1px solid #4ecca3;color:#4ecca3;padding:8px 14px;border-radius:6px;cursor:pointer;font-size:13px;font-weight:bold">📦 Check Stock</button>
+    <button onclick="autoEndOos()" style="background:#16213e;border:1px solid #e94560;color:#e94560;padding:8px 14px;border-radius:6px;cursor:pointer;font-size:13px;font-weight:bold">🛑 Auto-End OOS</button>
+  </div>
+</div>
+<p style="color:#aaa;font-size:13px;margin-bottom:12px">Checks live Amazon prices for your listed products and flags any that are losing money. Click <strong style="color:#f5a623">Find Missing ASINs</strong> first to link your existing listings to Amazon.</p>
+<div id="price-watch-status" style="display:none;font-size:13px;color:#aaa;margin-bottom:10px"></div>
+<div id="price-watch-results"></div>
+<div id="asin-table" style="display:none;margin-top:14px"></div>
+</div>
+</div>
+</div>
+
+<div id="orders" class="panel">
+<div class="card">
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+  <h2 style="margin:0">📦 Orders</h2>
+  <button class="btn btn-primary" onclick="loadOrders()">Refresh</button>
+</div>
+<p style="color:#aaa;font-size:13px;margin-bottom:14px">When a buyer purchases one of your listings, it appears here. Follow the steps to fulfill each order.</p>
+<div id="orders-loading" style="display:none;color:#aaa;font-size:13px">Loading orders...</div>
+<div id="orders-error" style="display:none;color:#e94560;font-size:13px"></div>
+<div id="orders-list"></div>
+</div>
+</div>
+
+<div id="activity" class="panel">
+<div class="card">
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+  <h2 style="margin:0">📋 Activity Log</h2>
+  <button class="btn btn-primary" onclick="loadActivity()">Refresh</button>
+</div>
+<p style="color:#aaa;font-size:13px;margin-bottom:14px">Every listing created, updated, deleted, or repriced is recorded here.</p>
+<div id="activity-loading" style="display:none;color:#aaa;font-size:13px">Loading...</div>
+<div id="activity-list"></div>
+</div>
+</div>
+
+<div id="setup" class="panel">
+<div class="card">
+<h2>⚙️ Setup &amp; Status</h2>
+
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px">
+<!-- Token / Connection -->
+<div style="background:#0f3460;border-radius:8px;padding:14px">
+  <h3 style="color:#4ecca3;font-size:14px;margin:0 0 10px 0">eBay Connection</h3>
+  <div id="setup-token-status" style="font-size:13px;color:#aaa">Loading...</div>
+  <div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap">
+    <a href="/auth/ebay" style="background:#e94560;color:white;padding:6px 12px;border-radius:6px;text-decoration:none;font-size:12px;font-weight:bold">🔗 Re-connect eBay</a>
+    <a href="/auth/manual" style="background:#16213e;border:1px solid #4ecca3;color:#4ecca3;padding:6px 12px;border-radius:6px;text-decoration:none;font-size:12px">Paste Code</a>
+    <button id="refresh-token-btn" onclick="refreshToken()" style="display:none;background:#16213e;border:1px solid #4ecca3;color:#4ecca3;padding:6px 12px;border-radius:6px;cursor:pointer;font-size:12px">🔄 Refresh Token</button>
+  </div>
+</div>
+<!-- Policies -->
+<div style="background:#0f3460;border-radius:8px;padding:14px">
+  <h3 style="color:#4ecca3;font-size:14px;margin:0 0 10px 0">Active eBay Policies</h3>
+  <div id="setup-policies" style="font-size:13px;color:#aaa">Loading...</div>
+  <button onclick="loadPolicies()" style="margin-top:10px;background:#16213e;border:1px solid #4ecca3;color:#4ecca3;padding:5px 10px;border-radius:6px;cursor:pointer;font-size:12px">🔄 Reload Policies</button>
+</div>
+</div>
+
+<!-- Env Vars -->
+<div style="background:#0f3460;border-radius:8px;padding:14px;margin-bottom:16px">
+  <h3 style="color:#4ecca3;font-size:14px;margin:0 0 10px 0">Environment Variables (.env)</h3>
+  <div id="setup-env" style="font-size:13px;color:#aaa;display:grid;grid-template-columns:1fr 1fr;gap:6px">Loading...</div>
+</div>
+
+<!-- Export / Backup -->
+<div style="background:#0f3460;border-radius:8px;padding:14px;margin-bottom:16px">
+  <h3 style="color:#4ecca3;font-size:14px;margin:0 0 10px 0">Export / Backup</h3>
+  <div style="display:flex;gap:8px;flex-wrap:wrap">
+    <a href="/api/export/listings" style="background:#16213e;border:1px solid #4ecca3;color:#4ecca3;padding:7px 14px;border-radius:6px;text-decoration:none;font-size:13px">⬇ Listings</a>
+    <a href="/api/export/blocklist" style="background:#16213e;border:1px solid #4ecca3;color:#4ecca3;padding:7px 14px;border-radius:6px;text-decoration:none;font-size:13px">⬇ Blocklist</a>
+    <a href="/api/export/repricer" style="background:#16213e;border:1px solid #4ecca3;color:#4ecca3;padding:7px 14px;border-radius:6px;text-decoration:none;font-size:13px">⬇ Repricer Settings</a>
+    <button onclick="exportQueue()" style="background:#16213e;border:1px solid #4ecca3;color:#4ecca3;padding:7px 14px;border-radius:6px;cursor:pointer;font-size:13px">⬇ Queue</button>
+  </div>
+</div>
+
+<!-- Preflight Test -->
+<div style="background:#0f3460;border-radius:8px;padding:14px;margin-bottom:16px">
+  <h3 style="color:#4ecca3;font-size:14px;margin:0 0 6px 0">Note on Preflight Validation</h3>
+  <p style="color:#aaa;font-size:13px;margin:0">Every "Add to Queue" and "Create Listing" call now runs a preflight check first — validating title length, price, image host, category, blocklist, and duplicate risk. Errors block submission; warnings allow it with a count shown.</p>
+</div>
+
+<!-- Server Health -->
+<div style="background:#0f3460;border-radius:8px;padding:14px">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+    <h3 style="color:#4ecca3;font-size:14px;margin:0">🏥 Server Health</h3>
+    <button onclick="loadHealth()" style="background:#16213e;border:1px solid #4ecca3;color:#4ecca3;padding:4px 10px;border-radius:6px;cursor:pointer;font-size:12px">Refresh</button>
+  </div>
+  <div id="health-status" style="font-size:13px;color:#aaa">Loading...</div>
+</div>
+</div>
+</div>
+
+<div id="profit" class="panel">
+<div class="stats" id="profit-stats">
+  <div class="stat"><h3 id="profit-orders">—</h3><p>Paid Orders</p></div>
+  <div class="stat"><h3 id="profit-revenue">—</h3><p>Gross Revenue</p></div>
+  <div class="stat"><h3 id="profit-net">—</h3><p>Est. Profit</p></div>
+</div>
+<div class="card">
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+  <h2 style="margin:0">💰 Profit Summary</h2>
+  <button class="btn btn-primary" onclick="loadProfitSummary()">Refresh</button>
+</div>
+<div id="profit-loading" style="display:none;color:#aaa;font-size:13px">Loading orders from eBay...</div>
+<div id="profit-error" style="display:none;color:#e94560;font-size:13px"></div>
+<div id="profit-detail"></div>
+</div>
+</div>
+
+</div>
+<script>
+let walmartData=null;
+let bulkResults=[];
+
+// ── Core ──────────────────────────────────────────────────
+/**
+ * Safe localStorage getter — returns fallback and clears the key if the stored
+ * value is not valid JSON. Prevents a corrupt entry from crashing the whole page.
+ */
+function safeLocalGet(key,fallback){try{const raw=localStorage.getItem(key);if(raw===null)return fallback;const val=JSON.parse(raw);return val==null?fallback:val;}catch(e){console.warn('Cleared corrupt localStorage key:',key);localStorage.removeItem(key);return fallback;}}
+function showTab(id,el){document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));document.getElementById(id).classList.add('active');el.classList.add('active');}
+function calculate(){const cost=parseFloat(document.getElementById('cost').value)||0;const sp=parseFloat(document.getElementById('sale-price').value)||0;const sh=parseFloat(document.getElementById('shipping').value)||0;const fp=parseFloat(document.getElementById('fee-pct').value)||13.25;const fee=sp*(fp/100);const profit=sp-cost-sh-fee-0.30;const margin=sp>0?((profit/sp)*100).toFixed(1):0;document.getElementById('profit-output').textContent='$'+profit.toFixed(2);document.getElementById('margin-output').textContent='Margin: '+margin+'%';document.getElementById('profit-output').style.color=profit>0?'#4ecca3':'#e94560';}
+
+// ── Dashboard ─────────────────────────────────────────────
+async function loadDashboardStats(){
+  try{
+    const res=await fetch('/api/local-listings');
+    const data=await res.json();
+    const pub=(data.listings||[]).filter(l=>l.status==='PUBLISHED');
+    const total=pub.reduce((s,l)=>s+(parseFloat(l.price)||0),0);
+    document.getElementById('dash-listings').textContent=pub.length;
+    document.getElementById('dash-value').textContent='$'+total.toFixed(2);
+  }catch(e){}
+}
+
+// ── Smart Type ───────────────────────────────────────────
+function getSmartType(title){
+  const t=title.toLowerCase();
+  // Fire / outdoor
+  if(t.includes('fire pit'))return t.includes('propane')||t.includes('gas')?'Propane':'Wood Burning';
+  if(t.includes('fire bowl'))return 'Wood Burning';
+  // Lighting
+  if(t.includes('led'))return 'LED';
+  if(t.includes('solar lamp')||t.includes('solar light'))return 'Solar';
+  // Audio
+  if(t.includes('earbud')||t.includes('earphone'))return 'In-Ear';
+  if(t.includes('headphone')||t.includes('headset'))return 'Over-Ear';
+  if(t.includes('speaker'))return 'Portable';
+  // Charging
+  if(t.includes('wireless charg')||t.includes('qi charg'))return 'Wireless';
+  if(t.includes('charger'))return 'Wired';
+  // Connectivity
+  if(t.includes('bluetooth'))return 'Bluetooth';
+  if(t.includes('wireless'))return 'Wireless';
+  if(t.includes('cordless'))return 'Cordless';
+  // Power
+  if(t.includes('electric'))return 'Electric';
+  if(t.includes('solar'))return 'Solar Powered';
+  if(t.includes('rechargeable'))return 'Rechargeable';
+  // Wearables
+  if(t.includes('smartwatch')||t.includes('smart watch')||t.includes('fitness tracker'))return 'Digital';
+  // Tools
+  if(t.includes('drill')||t.includes('grinder')||t.includes('sander'))return 'Electric';
+  if(t.includes('tool set')||t.includes('tool kit')||t.includes('wrench')||t.includes('socket'))return 'Manual';
+  // Outdoor/Indoor
+  if(t.includes('outdoor')||t.includes('patio')||t.includes('garden'))return 'Outdoor';
+  if(t.includes('indoor')||t.includes('desk')||t.includes('office'))return 'Indoor';
+  // Cleaning
+  if(t.includes('air duster')||t.includes('blower'))return 'Electric';
+  if(t.includes('vacuum'))return t.includes('cordless')?'Cordless':'Electric';
+  return 'Standard';
+}
+
+// ── Smart item specifics ──────────────────────────────────
+const COLOR_WORDS=['black','white','blue','red','green','gold','silver','gray','grey','pink','purple','orange','yellow','navy','brown','beige','rose gold','midnight','charcoal','space gray','space grey','titanium','champagne','cream','teal','aqua','coral','graphite'];
+// Categories that eBay requires Color for (by keyword in title)
+const COLOR_REQUIRED_KEYWORDS=['headphone','earbud','earphone','speaker','watch','lamp','desk light','charger','keyboard','mouse','backpack','bag','case','cover','wallet','shoes','sneaker','shirt','jacket','hoodie','pants','dress','ring','bracelet','necklace','pen','notebook','pad'];
+
+function extractColorFromTitle(t){
+  const tl=t.toLowerCase();
+  // Multi-word colors first (longest match wins)
+  for(const c of ['rose gold','space gray','space grey']){if(tl.includes(c))return c.split(' ').map(w=>w[0].toUpperCase()+w.slice(1)).join(' ');}
+  for(const c of COLOR_WORDS){
+    // Match as whole word to avoid "blackberry" → "Black"
+    const re=new RegExp('\\b'+c+'\\b');
+    if(re.test(tl))return c[0].toUpperCase()+c.slice(1);
+  }
+  return null;
+}
+
+function getSmartSpecifics(title){
+  const t=title.toLowerCase();
+  const s={};
+
+  // ── Color (eBay requires this for most categories) ────
+  const detectedColor=extractColorFromTitle(title);
+  if(detectedColor){
+    s['Color']=detectedColor;
+  } else {
+    // Default to Black for electronics/accessories where Color is required
+    const needsColor=COLOR_REQUIRED_KEYWORDS.some(kw=>t.includes(kw));
+    if(needsColor)s['Color']='Black';
+  }
+
+  // ── Connectivity ──────────────────────────────────────
+  {
+    const cp=[];
+    if(t.includes('wi-fi')||t.includes('wifi')||t.includes('wireless')||t.includes('mesh')||t.includes('router')||t.includes('extender')||t.includes('hotspot'))cp.push('Wi-Fi');
+    if(t.includes('bluetooth'))cp.push('Bluetooth');
+    if(t.includes('ethernet')||t.includes(' wired ')||t.includes(' lan '))cp.push('Ethernet');
+    if(cp.length){s['Connectivity']=cp[0];s['Connectivity Technology']=cp[0];}
+  }
+
+  // ── Connector ─────────────────────────────────────────
+  if(t.includes('usb-c')||t.includes('usb c')||t.includes('type-c'))s['Connector Type']='USB Type-C';
+
+  // ── Water resistance ──────────────────────────────────
+  if(t.includes('waterproof'))s['Water Resistance Level']='Waterproof';
+  else if(t.includes('water resistant'))s['Water Resistance Level']='Water Resistant';
+
+  // ── Power source ──────────────────────────────────────
+  if(t.includes('solar'))s['Power Source']='Solar Powered';
+  else if(t.includes('cordless'))s['Power Source']='Cordless';
+  else if(t.includes('rechargeable'))s['Power Source']='Battery Powered';
+  else if(t.includes('electric'))s['Power Source']='Electric';
+
+  // ── Remote control specifics ──────────────────────────
+  if(t.includes('remote control')||t.includes('replacement remote')||t.includes('remote for')){
+    s['Type']=t.includes('universal')?'Universal Remote':'Replacement Remote';
+    // Extract compatible brand from title (e.g. "for LG", "for Samsung")
+    const brandMatch=t.match(/\bfor\s+(lg|samsung|sony|vizio|tcl|roku|hisense|insignia|toshiba|fire tv|firetv)\b/i);
+    if(brandMatch){
+      const brandMap={'fire tv':'Amazon','firetv':'Amazon'};
+      const raw=brandMatch[1].toLowerCase();
+      s['Compatible Brand']=brandMap[raw]||(raw.charAt(0).toUpperCase()+raw.slice(1));
+    }else if(t.includes('universal')){
+      s['Compatible Brand']='Universal';
+    }
+    s['Model']='Universal';
+  }
+
+  // ── Keyboard specifics ────────────────────────────────
+  if(t.includes('keyboard')){
+    s['Compatible Brand']='Does Not Apply';
+    s['Compatible Model']='Does Not Apply';
+    if(t.includes('mechanical'))s['Switch Type']=t.includes('red switch')?'Red':t.includes('blue switch')?'Blue':t.includes('brown switch')?'Brown':'Mechanical';
+    if(t.includes('bluetooth')||t.includes('wireless')||t.includes('2.4g'))s['Connection']='Wireless';
+    else s['Connection']='Wired';
+    s['Keyboard Layout']='QWERTY';
+  }
+
+  // ── Mouse specifics ───────────────────────────────────
+  if(t.includes(' mouse')||t.includes('gaming mouse')||t.includes('wireless mouse')){
+    s['Compatible Brand']='Does Not Apply';
+    s['Hand Orientation']='Right';
+    if(t.includes('bluetooth')||t.includes('wireless')||t.includes('2.4g'))s['Connection']='Wireless';
+    else s['Connection']='Wired';
+  }
+
+  // ── Controller specifics ──────────────────────────────
+  if(t.includes('controller')||t.includes('gamepad')){
+    s['Compatible Brand']='Does Not Apply';
+    if(t.includes('bluetooth')||t.includes('wireless'))s['Connection']='Wireless';
+    else s['Connection']='Wired';
+  }
+
+  // ── Misc ──────────────────────────────────────────────
+  if(t.includes(' led '))s['Bulb Type']='LED';
+  if(t.includes('stainless steel'))s['Material']='Stainless Steel';
+  if(t.includes('noise cancel'))s['Noise Cancellation']='Active Noise Cancellation';
+  if(t.includes('android')&&t.includes('ios'))s['Compatible OS']='Android, iOS';
+  else if(t.includes('android'))s['Compatible OS']='Android';
+  else if(t.includes('ios')||t.includes('iphone'))s['Compatible OS']='iOS';
+
+  return Object.entries(s).map(([k,v])=>k+'='+v).join('\n');
+}
+
+// ── Weight memory ─────────────────────────────────────────
+function saveWeightForCategory(catId,weight){if(!catId||!weight)return;const w=safeLocalGet('jd_weights',{});w[catId]=weight;localStorage.setItem('jd_weights',JSON.stringify(w));}
+function recallWeightForCategory(catId){if(!catId)return;const w=safeLocalGet('jd_weights',{});if(w[catId])document.getElementById('weight').value=w[catId];}
+
+// ── Walmart single import ─────────────────────────────────
+async function importWalmart(){
+  const url=document.getElementById('walmart-url').value.trim();
+  const rd=document.getElementById('walmart-result');const ed=document.getElementById('walmart-error');const ld=document.getElementById('walmart-loading');
+  rd.style.display='none';ed.style.display='none';ld.style.display='block';
+  if(!url.includes('walmart.com')){ld.style.display='none';ed.textContent='Please enter a valid Walmart URL';ed.style.display='block';return;}
+  try{
+    const res=await fetch('/api/walmart',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({url})});
+    const data=await res.json();ld.style.display='none';
+    if(data.error){ed.textContent='Error: '+data.error;ed.style.display='block';return;}
+    walmartData=data;
+    document.getElementById('w-title').textContent=data.ebayTitle;
+    document.getElementById('w-price').textContent=data.price?'$'+data.price:'N/A';
+    document.getElementById('w-ebay-price').textContent=data.suggestedEbayPrice?'$'+data.suggestedEbayPrice:'N/A';
+    document.getElementById('w-profit').textContent=data.estimatedProfit?'$'+data.estimatedProfit:'N/A';
+    document.getElementById('walmart-image-url').value='';
+    document.getElementById('walmart-img-status').style.display='none';
+    rd.style.display='block';
+  }catch(e){ld.style.display='none';ed.textContent='Error: '+e.message;ed.style.display='block';}
+}
+async function uploadWalmartImage(){
+  const file=document.getElementById('walmart-image-file').files[0];
+  const status=document.getElementById('walmart-img-status');
+  if(!file){status.style.display='block';status.style.color='#e94560';status.textContent='Select a file first.';return;}
+  status.style.display='block';status.style.color='#aaa';status.textContent='Uploading...';
+  try{
+    const form=new FormData();form.append('image',file);
+    const res=await fetch('/api/upload-image',{method:'POST',body:form});
+    const data=await res.json();
+    if(data.error){status.style.color='#e94560';status.textContent='Error: '+data.error;return;}
+    document.getElementById('walmart-image-url').value=data.hostedUrl;
+    status.style.color='#4ecca3';status.textContent='✅ Uploaded — click Send to Listing Form';
+  }catch(e){status.style.color='#e94560';status.textContent='Error: '+e.message;}
+}
+async function sendToListing(){
+  if(!walmartData)return;
+  document.getElementById('title').value=decodeHtml(walmartData.ebayTitle||'');
+  document.getElementById('description').value=walmartData.ebayDescription||'';
+  document.getElementById('price').value=walmartData.suggestedEbayPrice||'';
+  // Store source cost so margin presets work
+  document.getElementById('amazon-cost').value=walmartData.price||walmartData.suggestedEbayPrice||'';
+  document.getElementById('price-preset-label').textContent='';
+  document.getElementById('type').value=getSmartType(walmartData.ebayTitle||'');
+  // Smart specifics from title
+  const smart=getSmartSpecifics(walmartData.ebayTitle||'');
+  document.getElementById('itemSpecifics').value=smart;
+  setListingImage('');
+  // Switch tab
+  const createTab=Array.from(document.querySelectorAll('.tab')).find(t=>(t.getAttribute('onclick')||'').includes("'create'"));
+  if(createTab)showTab('create',createTab);
+  // Image upload (fire and forget — don't block tab switch)
+  const imgUrl=(document.getElementById('walmart-image-url').value||'').trim();
+  if(imgUrl){
+    const label=document.getElementById('listing-img-label');
+    label.textContent='Uploading image... ⏳';label.style.color='#aaa';
+    fetch('/api/rehost-image',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({url:imgUrl})})
+      .then(r=>r.json()).then(d=>{if(d.hostedUrl)setListingImage(d.hostedUrl);}).catch(()=>{});
+  }
+  // Duplicate check (fire and forget)
+  checkDuplicate(walmartData.ebayTitle||'');
+  // Auto-detect category + required aspects
+  const aspStatus=document.getElementById('aspects-status');
+  aspStatus.style.display='block';aspStatus.style.color='#aaa';aspStatus.textContent='Auto-detecting category...';
+  try{
+    const catRes=await fetch('/api/category-suggestions?q='+encodeURIComponent(walmartData.ebayTitle||''));
+    const catData=await catRes.json();
+    if(catData.suggestions&&catData.suggestions.length){
+      const top=catData.suggestions[0];
+      document.getElementById('category').value=top.id;
+      recallWeightForCategory(top.id);
+      aspStatus.textContent='Category set · Fetching required aspects...';
+      const aspRes=await fetch('/api/category-aspects?category_id='+encodeURIComponent(top.id));
+      const aspData=await aspRes.json();
+      if(aspData.aspects&&aspData.aspects.length){
+        const existing=document.getElementById('itemSpecifics').value;
+        const existingKeys=existing.split('\n').map(l=>l.split('=')[0].trim().toLowerCase()).filter(Boolean);
+        // Alias map: if any alias of an eBay aspect key is already filled, skip it
+        const ASPECT_ALIASES={'brand':['compatible brand','manufacturer'],'compatible brand':['brand','manufacturer'],'colour':['color'],'color':['colour']};
+        const toAdd=aspData.aspects.filter(a=>{const k=a.name.toLowerCase();if(existingKeys.includes(k))return false;const aliases=ASPECT_ALIASES[k]||[];return!aliases.some(al=>existingKeys.includes(al));});
+        if(toAdd.length){
+          const lines=toAdd.map(a=>a.name+'='+(a.values.length?a.values[0]:''));
+          document.getElementById('itemSpecifics').value=(existing.trim()?existing.trim()+'\n':'')+lines.join('\n');
+        }
+        aspStatus.style.color='#4ecca3';aspStatus.textContent='✅ Category auto-set ('+top.id+') · '+aspData.aspects.length+' required aspects loaded — review values';
+      }else{aspStatus.style.color='#4ecca3';aspStatus.textContent='✅ Category auto-set ('+top.id+')';}
+    }else{aspStatus.style.color='#aaa';aspStatus.textContent='Could not auto-detect category — use Find Category';}
+  }catch(e){aspStatus.style.color='#e94560';aspStatus.textContent='Auto-detect failed — use Find Category';}
+}
+
+// ── Bulk Import ───────────────────────────────────────────
+async function bulkImportAll(){
+  const raw=document.getElementById('bulk-urls').value.trim();
+  const urls=raw.split('\n').map(u=>u.trim()).filter(u=>u.includes('walmart.com'));
+  if(!urls.length){alert('No valid Walmart URLs found.');return;}
+  bulkResults=urls.map(url=>({url,data:null,imageUrl:'',status:'pending',error:''}));
+  renderBulkResults();
+  document.getElementById('bulk-queue-btn').style.display='none';
+  for(let i=0;i<urls.length;i++){
+    bulkResults[i].status='importing';
+    renderBulkResults();
+    try{
+      const res=await fetch('/api/walmart',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({url:urls[i]})});
+      const data=await res.json();
+      if(data.error){bulkResults[i].status='error';bulkResults[i].error=data.error;}
+      else{bulkResults[i].data=data;bulkResults[i].status='done';}
+    }catch(e){bulkResults[i].status='error';bulkResults[i].error=e.message;}
+    renderBulkResults();
+  }
+  document.getElementById('bulk-queue-btn').style.display='inline-block';
+}
+function renderBulkResults(){
+  const div=document.getElementById('bulk-results');
+  if(!bulkResults.length){div.innerHTML='';return;}
+  div.innerHTML=bulkResults.map((r,i)=>{
+    const statusIcon=r.status==='pending'?'⏳':r.status==='importing'?'🔄':r.status==='error'?'❌':'✅';
+    const title=r.data?r.data.ebayTitle:r.url.substring(0,60)+'...';
+    const profit=r.data&&r.data.estimatedProfit?'Est. profit: <span style="color:#4ecca3">$'+r.data.estimatedProfit+'</span> · ':'';
+    const price=r.data&&r.data.suggestedEbayPrice?'eBay: <span style="color:#4ecca3">$'+r.data.suggestedEbayPrice+'</span>':'';
+    const imgSection=r.status==='done'?
+      '<div style="display:flex;gap:6px;align-items:center;margin-top:6px">'
+      +(r.imageUrl?'<img src="'+r.imageUrl+'" style="width:40px;height:40px;object-fit:cover;border-radius:4px;border:1px solid #4ecca3"/>':'')
+      +'<input type="file" accept="image/*" onchange="bulkUploadImage('+i+',this.files[0])" style="font-size:11px;color:#aaa;flex:1"/>'
+      +'<span id="bulk-img-status-'+i+'" style="font-size:11px;color:#aaa">'+(r.imageUrl?'✅ Ready':'No image')+'</span>'
+      +'</div>':'';
+    return'<div style="background:#0f3460;border-radius:8px;padding:10px;margin-bottom:8px">'
+      +'<div style="font-size:13px;color:#eee">'+statusIcon+' '+title+'</div>'
+      +(r.data?'<div style="font-size:12px;color:#aaa;margin-top:3px">'+profit+price+'</div>':'')
+      +(r.error?'<div style="font-size:11px;color:#e94560;margin-top:3px">'+r.error+'</div>':'')
+      +imgSection+'</div>';
+  }).join('');
+}
+async function bulkUploadImage(index,file){
+  if(!file)return;
+  const statusEl=document.getElementById('bulk-img-status-'+index);
+  if(statusEl)statusEl.textContent='Uploading...';
+  try{
+    const form=new FormData();form.append('image',file);
+    const res=await fetch('/api/upload-image',{method:'POST',body:form});
+    const data=await res.json();
+    if(data.hostedUrl){bulkResults[index].imageUrl=data.hostedUrl;renderBulkResults();}
+    else if(statusEl)statusEl.textContent='❌ Failed';
+  }catch(e){if(statusEl)statusEl.textContent='❌ '+e.message;}
+}
+function bulkAddAllToQueue(){
+  const ready=bulkResults.filter(r=>r.status==='done'&&r.imageUrl&&r.data);
+  if(!ready.length){alert('No items with images ready. Upload an image for each product first.');return;}
+  for(const r of ready){
+    const cleanTitle=decodeHtml(r.data.ebayTitle||'');
+    const smart=getSmartSpecifics(cleanTitle);
+    listingQueue.push({
+      title:cleanTitle,description:r.data.ebayDescription||'',
+      price:r.data.suggestedEbayPrice||'',quantity:'1',category:'',
+      condition:'NEW',type:'',imageUrl:r.imageUrl,weight:'1',
+      mpn:'Does Not Apply',countryMfg:'China',upc:'',itemSpecifics:smart
+    });
+  }
+  saveQueue();renderQueue();
+  const createTab=Array.from(document.querySelectorAll('.tab')).find(t=>(t.getAttribute('onclick')||'').includes("'create'"));
+  if(createTab)showTab('create',createTab);
+  alert(ready.length+' item(s) added to queue! Review item specifics, weight, and category before listing.');
+}
+
+// ── Product Research ──────────────────────────────────────
+async function searchProducts(){const q=document.getElementById('search-q').value||'fire pit';const rd=document.getElementById('research-results');const sd=document.getElementById('research-stats');rd.innerHTML='<p style="color:#aaa">Searching...</p>';try{const res=await fetch('/api/terapeak?q='+encodeURIComponent(q));const data=await res.json();if(data.error){rd.innerHTML='<p style="color:#e94560">Error: '+data.error+'</p>';return;}sd.style.display='block';document.getElementById('r-total').textContent=data.totalResults?data.totalResults.toLocaleString():'0';document.getElementById('r-avg').textContent='$'+data.avgPrice;document.getElementById('r-min').textContent='$'+data.minPrice;document.getElementById('r-max').textContent='$'+data.maxPrice;rd.innerHTML=data.items.map(i=>'<div class="item-card"><h4>'+i.title+'</h4><p>$'+i.price+' - '+i.condition+' - Seller: '+i.seller+'</p></div>').join('');}catch(e){rd.innerHTML='<p style="color:#e94560">Error: '+e.message+'</p>';}}
+
+// ── Create Listing ────────────────────────────────────────
+async function findCategory(){
+  const title=document.getElementById('title').value.trim();const box=document.getElementById('category-suggestions');
+  if(!title){box.style.display='block';box.innerHTML='<span style="color:#e94560">Enter a title first.</span>';return;}
+  box.style.display='block';box.innerHTML='<span style="color:#aaa">Searching...</span>';
+  try{
+    const res=await fetch('/api/category-suggestions?q='+encodeURIComponent(title));const data=await res.json();
+    if(data.error){box.innerHTML='<span style="color:#e94560">'+data.error+'</span>';return;}
+    box.innerHTML=data.suggestions.map(s=>'<div style="padding:5px 0;border-bottom:1px solid #16213e;cursor:pointer;color:#4ecca3" onclick="document.getElementById(\'category\').value=\''+s.id+'\';recallWeightForCategory(\''+s.id+'\');document.getElementById(\'category-suggestions\').style.display=\'none\'"><strong>'+s.id+'</strong> — '+s.path+'</div>').join('');
+  }catch(e){box.innerHTML='<span style="color:#e94560">Error: '+e.message+'</span>';}
+}
+function getFormBody(){const asin=document.getElementById('asin').value;const azInput=document.getElementById('amazon-url');const sourceUrl=asin?(azInput&&azInput.dataset.lastImport?azInput.dataset.lastImport:'https://www.amazon.com/dp/'+asin):null;return{title:document.getElementById('title').value,description:document.getElementById('description').value,price:document.getElementById('price').value,quantity:document.getElementById('quantity').value,category:document.getElementById('category').value,condition:document.getElementById('condition').value,type:document.getElementById('type').value,imageUrl:document.getElementById('imageUrl').value,weight:document.getElementById('weight').value,mpn:document.getElementById('mpn').value,countryMfg:document.getElementById('countryMfg').value,upc:document.getElementById('upc').value,itemSpecifics:document.getElementById('itemSpecifics').value,asin:asin,sourceUrl:sourceUrl};}
+async function submitListing(){
+  const out=document.getElementById('create-output');
+  const sku=document.getElementById('edit-sku').value;
+  const offerId=document.getElementById('edit-offer-id').value;
+  const isEdit=!!sku;
+  const body=getFormBody();
+  if(isEdit){body.sku=sku;body.offerId=offerId;}
+  // Preflight (skip for edits — user already validated on original create)
+  if(!isEdit){
+    const submitBtn=document.getElementById('listing-submit-btn');
+    submitBtn.disabled=true;submitBtn.textContent='Checking...';
+    const ok=await runPreflight(body);
+    submitBtn.disabled=false;submitBtn.textContent='Create Listing on eBay';
+    if(!ok)return;
+  }
+  out.style.display='block';
+  out.textContent=isEdit?'Updating listing...':'Creating listing on eBay...';
+  try{
+    const res=await fetch(isEdit?'/api/update-listing':'/api/create-listing',{method:isEdit?'PUT':'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
+    const data=await res.json();
+    if(data.ebayUrl){out.innerHTML=JSON.stringify(data,null,2)+'\n\n<a href="'+data.ebayUrl+'" target="_blank" style="color:#4ecca3;font-weight:bold">View on eBay →</a>';}
+    else{out.textContent=JSON.stringify(data,null,2);}
+    if(data.success){loadDashboardStats();if(isEdit)cancelEdit();}
+  }catch(e){out.textContent='Error: '+e.message;}
+}
+function cancelEdit(){document.getElementById('edit-sku').value='';document.getElementById('edit-offer-id').value='';document.getElementById('edit-mode-banner').style.display='none';document.getElementById('listing-submit-btn').textContent='Create Listing on eBay';document.getElementById('amazon-cost').value='';document.getElementById('price-preset-label').textContent='';}
+function editListing(sku,offerId,listing){document.getElementById('edit-sku').value=sku;document.getElementById('edit-offer-id').value=offerId||'';document.getElementById('edit-mode-sku-label').textContent=sku;document.getElementById('edit-mode-banner').style.display='flex';document.getElementById('listing-submit-btn').textContent='Update Listing on eBay';if(listing.title)document.getElementById('title').value=listing.title;if(listing.price)document.getElementById('price').value=listing.price;if(listing.description)document.getElementById('description').value=listing.description;if(listing.quantity)document.getElementById('quantity').value=listing.quantity;if(listing.imageUrl)setListingImage(listing.imageUrl);const createTab=Array.from(document.querySelectorAll('.tab')).find(t=>(t.getAttribute('onclick')||'').includes("'create'"));if(createTab)showTab('create',createTab);}
+async function deleteListing(sku,offerId,status){
+  if(!confirm('Delete listing '+sku+'?'))return;
+  try{
+    const params=new URLSearchParams();if(offerId)params.append('offerId',offerId);if(status)params.append('status',status);
+    const res=await fetch('/api/delete-listing/'+encodeURIComponent(sku)+'?'+params,{method:'DELETE'});
+    const data=await res.json();
+    if(data.success){loadMyListings();loadDashboardStats();}else{alert('Error: '+data.error);}
+  }catch(e){alert('Error: '+e.message);}
+}
+async function cleanupUnpublished(){
+  if(!confirm('Delete all UNPUBLISHED and orphaned listings? Published listings will be kept.'))return;
+  const cr=document.getElementById('cleanup-result');cr.style.display='block';cr.textContent='Cleaning up...';
+  try{
+    const res=await fetch('/api/cleanup-unpublished',{method:'POST'});const data=await res.json();
+    if(data.success){cr.textContent=data.message;loadMyListings();loadDashboardStats();}
+    else{cr.style.color='#e94560';cr.textContent='Error: '+data.error;}
+  }catch(e){cr.style.color='#e94560';cr.textContent='Error: '+e.message;}
+}
+
+// ── Templates ─────────────────────────────────────────────
+const templates={airduster:{title:'Electric Air Duster Cordless Compressed Air Blower Computer Keyboard Cleaner New',description:'Electric Air Duster\n\nPowerful cordless cleaning solution.\n\nJustice Den - Quality you can trust.',price:'39.99',category:'175701'},bluetooth:{title:'Bluetooth Speaker Portable Wireless Waterproof 20W Deep Bass New',description:'Bluetooth Speaker\n\nJustice Den - Quality you can trust.',price:'49.99',category:'14969'},earbuds:{title:'Wireless Earbuds Bluetooth 5.3 Active Noise Cancelling 48Hr Battery New',description:'Wireless Earbuds\n\nJustice Den - Quality you can trust.',price:'39.99',category:'112529'},smartwatch:{title:'Smart Watch Fitness Tracker Heart Rate Monitor iOS Android Compatible New',description:'Smartwatch\n\nJustice Den - Quality you can trust.',price:'59.99',category:'178893'},firepit:{title:'32 Inch American Flag Fire Pit Outdoor Wood Burning Patio Backyard New',description:'Fire Pit\n\nJustice Den - Quality you can trust.',price:'139.99',category:'175673'},tools:{title:'Professional Tool Set Heavy Duty Home Repair Kit Complete Set New',description:'Tool Set\n\nJustice Den - Quality you can trust.',price:'49.99',category:'631'}};
+function loadTemplate(name){const t=templates[name];document.getElementById('title').value=t.title;document.getElementById('description').value=t.description;document.getElementById('price').value=t.price;document.getElementById('category').value=t.category;const smart=getSmartSpecifics(t.title);document.getElementById('itemSpecifics').value=smart;const createTab=Array.from(document.querySelectorAll('.tab')).find(t=>(t.getAttribute('onclick')||'').includes("'create'"));if(createTab)showTab('create',createTab);}
+
+// ── Images ────────────────────────────────────────────────
+async function addToGallery(){const url=document.getElementById('manual-image-url').value.trim();if(!url)return;try{const res=await fetch('/api/images/add',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({url})});const data=await res.json();if(data.success){document.getElementById('manual-image-url').value='';loadGallery();}}catch(e){alert('Error: '+e.message);}}
+async function loadGallery(){const gallery=document.getElementById('image-gallery');gallery.innerHTML='<span style="color:#aaa;font-size:12px">Loading...</span>';try{const res=await fetch('/api/images');const data=await res.json();if(!data.images.length){gallery.innerHTML='<span style="color:#aaa;font-size:12px">No images yet.</span>';return;}gallery.innerHTML=data.images.map((img,i)=>'<div style="position:relative;background:#16213e;border-radius:8px;overflow:hidden;border:1px solid #1a1a2e;cursor:pointer" onclick="useGalleryImage(\''+img.hostedUrl+'\')" title="Click to use in listing"><img src="'+img.hostedUrl+'" style="width:100%;height:120px;object-fit:cover;display:block" onerror="this.style.display=\'none\'"/><div style="padding:6px;font-size:10px;color:#aaa;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+new Date(img.savedAt).toLocaleDateString()+'</div><button onclick="event.stopPropagation();deleteGalleryImage('+i+')" style="position:absolute;top:4px;right:4px;background:#e94560;border:none;color:white;border-radius:50%;width:18px;height:18px;cursor:pointer;font-size:10px;line-height:18px;padding:0;text-align:center">×</button></div>').join('');}catch(e){gallery.innerHTML='<span style="color:#e94560;font-size:12px">Error: '+e.message+'</span>';}}
+function useGalleryImage(url){document.getElementById('image-hosted-url').value=url;document.getElementById('image-preview').src=url;document.getElementById('image-preview-wrap').style.display='block';document.getElementById('image-result').style.display='block';setListingImage(url);}
+async function deleteGalleryImage(index){await fetch('/api/images/'+index,{method:'DELETE'});loadGallery();}
+async function uploadImageFile(){const file=document.getElementById('image-file-input').files[0];const err=document.getElementById('image-error');const result=document.getElementById('image-result');const preview=document.getElementById('image-preview-wrap');err.style.display='none';result.style.display='none';preview.style.display='none';if(!file){err.textContent='Please select a file first.';err.style.color='#e94560';err.style.display='block';return;}err.textContent='Uploading...';err.style.color='#aaa';err.style.display='block';try{const form=new FormData();form.append('image',file);const res=await fetch('/api/upload-image',{method:'POST',body:form});const data=await res.json();if(data.error){err.textContent='Error: '+data.error;err.style.color='#e94560';return;}err.style.display='none';document.getElementById('image-hosted-url').value=data.hostedUrl;document.getElementById('image-preview').src=data.hostedUrl;preview.style.display='block';result.style.display='block';setListingImage(data.hostedUrl);}catch(e){err.textContent='Error: '+e.message;err.style.color='#e94560';}}
+async function rehostImage(){const url=document.getElementById('image-url-input').value.trim();const err=document.getElementById('image-error');const result=document.getElementById('image-result');const preview=document.getElementById('image-preview-wrap');err.style.display='none';result.style.display='none';preview.style.display='none';if(!url){err.textContent='Please paste an image URL first.';err.style.display='block';return;}err.textContent='Re-hosting...';err.style.display='block';err.style.color='#aaa';try{const res=await fetch('/api/rehost-image',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({url})});const data=await res.json();if(data.error){err.textContent='Error: '+data.error;err.style.color='#e94560';return;}err.style.display='none';document.getElementById('image-hosted-url').value=data.hostedUrl;document.getElementById('image-preview').src=data.hostedUrl;preview.style.display='block';result.style.display='block';setListingImage(data.hostedUrl);}catch(e){err.textContent='Error: '+e.message;err.style.color='#e94560';}}
+function copyHostedUrl(){const input=document.getElementById('image-hosted-url');input.select();navigator.clipboard.writeText(input.value);}
+function sendImageToListing(){const url=document.getElementById('image-hosted-url').value;setListingImage(url);const createTab=Array.from(document.querySelectorAll('.tab')).find(t=>(t.getAttribute('onclick')||'').includes("'create'"));if(createTab)showTab('create',createTab);}
+function setListingImage(url){document.getElementById('imageUrl').value=url||'';const thumb=document.getElementById('listing-img-thumb');const label=document.getElementById('listing-img-label');if(url){thumb.src=url;thumb.style.display='block';label.textContent=url;label.style.color='#4ecca3';}else{thumb.src='';thumb.style.display='none';label.textContent='No image selected — go to Images tab to re-host or upload';label.style.color='#aaa';}}
+
+// ── Item Specifics ────────────────────────────────────────
+async function checkRequiredAspects(){const catId=document.getElementById('category').value.trim();const status=document.getElementById('aspects-status');if(!catId){status.style.display='block';status.style.color='#e94560';status.textContent='Enter a Category ID first.';return;}status.style.display='block';status.style.color='#aaa';status.textContent='Fetching required aspects...';try{const res=await fetch('/api/category-aspects?category_id='+encodeURIComponent(catId));const data=await res.json();if(data.error){status.style.color='#e94560';status.textContent='Error: '+data.error;return;}if(!data.aspects.length){status.style.color='#4ecca3';status.textContent='No required specifics for this category.';return;}const existing=document.getElementById('itemSpecifics').value;const existingKeys=existing.split('\n').map(l=>l.split('=')[0].trim().toLowerCase()).filter(Boolean);const toAdd=data.aspects.filter(a=>!existingKeys.includes(a.name.toLowerCase()));if(!toAdd.length){status.style.color='#4ecca3';status.textContent='All '+data.aspects.length+' required aspects already filled in.';return;}const lines=toAdd.map(a=>a.name+'='+(a.values.length?a.values[0]:''));document.getElementById('itemSpecifics').value=(existing.trim()?existing.trim()+'\n':'')+lines.join('\n');status.style.color='#4ecca3';status.textContent='Added '+toAdd.length+' required aspect(s) — review values.';}catch(e){status.style.color='#e94560';status.textContent='Error: '+e.message;}}
+function goPickImage(){const tab=Array.from(document.querySelectorAll('.tab')).find(t=>(t.getAttribute('onclick')||'').includes("'images'"));if(tab){showTab('images',tab);loadGallery();}}
+
+// ── Queue ─────────────────────────────────────────────────
+let listingQueue=safeLocalGet('jd_queue',[]);
+let queueHistory=[]; // undo stack — each entry is a snapshot (array copy)
+const QUEUE_HISTORY_MAX=10;
+function saveQueue(){localStorage.setItem('jd_queue',JSON.stringify(listingQueue));}
+function pushQueueHistory(){
+  queueHistory.push(JSON.parse(JSON.stringify(listingQueue)));
+  if(queueHistory.length>QUEUE_HISTORY_MAX)queueHistory.shift();
+  const btn=document.getElementById('queue-undo-btn');
+  if(btn)btn.style.display='inline-block';
+}
+function undoQueue(){
+  if(!queueHistory.length)return;
+  listingQueue=queueHistory.pop();
+  saveQueue();renderQueue();
+  const btn=document.getElementById('queue-undo-btn');
+  if(btn)btn.style.display=queueHistory.length?'inline-block':'none';
+}
+
+let editingQueueIndex=-1;
+
+/**
+ * Run /api/validate-listing and show results in #preflight-result.
+ * Returns true if OK to proceed (no errors), false if blocked by errors.
+ * Warnings are shown but don't block.
+ */
+async function runPreflight(body){
+  const pr=document.getElementById('preflight-result');
+  pr.style.display='none';
+  try{
+    const res=await fetch('/api/validate-listing',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
+    const d=await res.json();
+    if(d.valid&&(!d.warnings||!d.warnings.length)){pr.style.display='none';return true;}
+    let html='';
+    if(d.errors&&d.errors.length){
+      html+='<div style="font-weight:bold;color:#e94560;margin-bottom:6px">❌ Preflight failed — fix these before listing:</div>'
+        +d.errors.map(e=>'<div style="color:#e94560;font-size:12px;padding:2px 0">• '+escHtml(e)+'</div>').join('');
+    }
+    if(d.warnings&&d.warnings.length){
+      if(html)html+='<div style="margin:8px 0 4px 0;border-top:1px solid #333"></div>';
+      html+='<div style="font-weight:bold;color:#f5a623;margin-bottom:4px">'+(d.valid?'⚠️ Warnings (OK to proceed):':'⚠️ Warnings:')+'</div>'
+        +d.warnings.map(w=>'<div style="color:#f5a623;font-size:12px;padding:2px 0">• '+escHtml(w)+'</div>').join('');
+    }
+    pr.style.display='block';
+    pr.style.background=d.valid?'#1a1200':'#1a0a0a';
+    pr.style.border='1px solid '+(d.valid?'#f5a623':'#e94560');
+    pr.innerHTML=html;
+    return d.valid; // warnings don't block
+  }catch(err){
+    // Preflight server error — don't block the user, just skip
+    console.warn('Preflight check failed:',err);
+    pr.style.display='none';
+    return true;
+  }
+}
+
+async function addToQueue(){
+  const body=getFormBody();
+  if(!body.title||!body.price){alert('Title and price are required.');return;}
+  if(!body.imageUrl){alert('No image selected — upload or pick one first.');return;}
+  // Preflight check
+  const addBtn=document.getElementById('queue-add-btn');
+  if(addBtn){addBtn.disabled=true;addBtn.textContent='Checking...';}
+  const ok=await runPreflight(body);
+  if(addBtn){addBtn.disabled=false;addBtn.textContent='+ Add to Queue';}
+  if(!ok)return; // errors shown in #preflight-result
+  saveWeightForCategory(body.category,body.weight);
+  pushQueueHistory();
+  if(editingQueueIndex>=0){listingQueue.splice(editingQueueIndex,1,body);editingQueueIndex=-1;}else{listingQueue.push(body);}
+  saveQueue();renderQueue();
+  ['title','description','price','category','type','mpn','upc','itemSpecifics'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('quantity').value='1';document.getElementById('weight').value='1';document.getElementById('condition').value='NEW';
+  document.getElementById('amazon-cost').value='';document.getElementById('price-preset-label').textContent='';
+  setListingImage('');document.getElementById('create-output').style.display='none';
+  document.getElementById('preflight-result').style.display='none';
+  document.getElementById('aspects-status').style.display='none';
+}
+function removeFromQueue(i){pushQueueHistory();listingQueue.splice(i,1);saveQueue();renderQueue();}
+function clearQueue(){if(!listingQueue.length)return;pushQueueHistory();listingQueue=[];saveQueue();renderQueue();}
+async function removeBlocklistedFromQueue(){
+  let bl={brands:[],keywords:[],asins:[]};
+  try{const r=await fetch('/api/blocklist');bl=await r.json();}catch(e){}
+  const before=listingQueue.length;
+  pushQueueHistory();
+  listingQueue=listingQueue.filter(item=>{
+    const title=(item.title||'').toLowerCase();
+    const asin=(item.asin||'').toUpperCase();
+    if(asin && bl.asins && bl.asins.map(a=>a.toUpperCase()).includes(asin)) return false;
+    for(const brand of (bl.brands||[])){if(title.includes(brand.toLowerCase())) return false;}
+    for(const kw of (bl.keywords||[])){if(title.includes(kw.toLowerCase())) return false;}
+    return true;
+  });
+  const removed=before-listingQueue.length;
+  saveQueue();renderQueue();
+  if(removed>0) alert(`Removed ${removed} risky item${removed>1?'s':''} from your queue.`);
+  else alert('No blocklisted items found in queue — all clear!');
+}
+function escHtml(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');}
+function renderQueue(){
+  const section=document.getElementById('queue-section');const list=document.getElementById('queue-list');const count=document.getElementById('queue-count');
+  if(!listingQueue.length){section.style.display='none';return;}
+  section.style.display='block';count.textContent=listingQueue.length;
+  list.innerHTML=listingQueue.map((item,i)=>
+    '<div style="display:flex;align-items:center;gap:10px;padding:8px;background:#0f3460;border-radius:6px;margin-bottom:6px">'
+    +(item.imageUrl?'<img src="'+escHtml(item.imageUrl)+'" style="width:44px;height:44px;object-fit:cover;border-radius:4px;flex-shrink:0"/>':'<div style="width:44px;height:44px;background:#16213e;border-radius:4px;flex-shrink:0;display:flex;align-items:center;justify-content:center;color:#555;font-size:10px">no img</div>')
+    +'<div style="flex:1;min-width:0"><div style="font-size:13px;color:#eee;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+escHtml(item.title)+'</div>'
+    +'<div style="font-size:12px;color:#4ecca3;margin-top:2px">$'+escHtml(item.price)+' · '+escHtml(item.weight||1)+'lb'+(item.category?' · cat '+escHtml(item.category):'')+'</div></div>'
+    +'<div style="display:flex;gap:6px;flex-shrink:0">'
+    +'<button onclick="editQueueItem('+i+')" style="background:#16213e;border:1px solid #4ecca3;color:#4ecca3;padding:3px 10px;border-radius:4px;cursor:pointer;font-size:12px">Edit</button>'
+    +'<button onclick="removeFromQueue('+i+')" style="background:none;border:1px solid #e94560;color:#e94560;padding:3px 10px;border-radius:4px;cursor:pointer;font-size:12px">Remove</button>'
+    +'</div></div>'
+  ).join('');
+}
+function editQueueItem(i){
+  const item=listingQueue[i];
+  // Fill form with this queue item's data
+  document.getElementById('title').value=item.title||'';
+  document.getElementById('description').value=item.description||'';
+  document.getElementById('price').value=item.price||'';
+  document.getElementById('quantity').value=item.quantity||1;
+  document.getElementById('category').value=item.category||'';
+  document.getElementById('condition').value=item.condition||'NEW';
+  document.getElementById('type').value=item.type||'';
+  document.getElementById('weight').value=item.weight||1;
+  document.getElementById('mpn').value=item.mpn||'Does Not Apply';
+  document.getElementById('countryMfg').value=item.countryMfg||'China';
+  document.getElementById('upc').value=item.upc||'';
+  document.getElementById('itemSpecifics').value=item.itemSpecifics||'';
+  setListingImage(item.imageUrl||'');
+  // Track the slot being edited — item stays in queue until user saves back with "+ Add to Queue"
+  editingQueueIndex=i;
+  renderQueue();
+  // Show a notice in the form
+  const out=document.getElementById('create-output');
+  out.style.display='block';out.style.color='#4ecca3';
+  out.textContent='Editing queue item — make changes then click "+ Add to Queue" to save back.';
+  // Scroll to top of form
+  document.getElementById('create').scrollIntoView({behavior:'smooth'});
+}
+let listingRunning=false;
+async function listAllQueued(){
+  if(!listingQueue.length)return;
+  if(listingRunning){alert('Listing already in progress — please wait.');return;}
+  listingRunning=true;
+  const listBtn=document.querySelector('#queue-section .btn-green');
+  if(listBtn){listBtn.disabled=true;listBtn.textContent='⏳ Listing...';}
+  const prog=document.getElementById('queue-progress');prog.style.display='block';prog.innerHTML='';
+  const items=[...listingQueue];const failed=[];
+  for(let i=0;i<items.length;i++){
+    const row=items[i];const el=document.createElement('div');
+    el.style.cssText='padding:5px 0;border-bottom:1px solid #16213e;font-size:12px;color:#aaa';
+    el.textContent='['+(i+1)+'/'+items.length+'] '+row.title.substring(0,50)+'... ⏳';
+    prog.appendChild(el);prog.scrollTop=prog.scrollHeight;
+    try{
+      const res=await fetch('/api/create-listing',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(row)});
+      const data=await res.json();
+      if(data.success){el.style.color='#4ecca3';el.innerHTML='['+(i+1)+'/'+items.length+'] '+row.title.substring(0,50)+'... ✅ <a href="'+data.ebayUrl+'" target="_blank" style="color:#4ecca3">View →</a>';}
+      else{
+        failed.push(row);el.style.color='#e94560';
+        let detail='';
+        if(Array.isArray(data.details))detail=data.details.map(e=>e.longMessage||e.message||'').filter(Boolean).join(' · ');
+        else if(data.details&&data.details.description)detail=data.details.description;
+        el.textContent='['+(i+1)+'/'+items.length+'] '+row.title.substring(0,50)+'... ❌ '+(detail||data.error||'Unknown error');
+      }
+    }catch(e){
+      failed.push(row);el.style.color='#e94560';
+      // fetch doesn't throw on 4xx — this is a network error
+      el.textContent='['+(i+1)+'/'+items.length+'] '+row.title.substring(0,50)+'... ❌ Network error: '+e.message;
+    }
+  }
+  listingQueue=failed;saveQueue();renderQueue();
+  const sum=document.createElement('div');
+  sum.style.cssText='margin-top:10px;padding:10px;background:#16213e;border-radius:6px;font-size:13px;font-weight:bold;color:'+(failed.length===0?'#4ecca3':'#e94560');
+  sum.textContent='Done: '+(items.length-failed.length)+' listed'+(failed.length?' · '+failed.length+' failed (still in queue)':'!');
+  prog.appendChild(sum);
+  loadDashboardStats();
+  refreshListedAsins();
+  listingRunning=false;
+  if(listBtn){listBtn.disabled=false;listBtn.textContent='List All on eBay';}
+}
+
+// ── My Listings ───────────────────────────────────────────
+async function loadMyListings(){const tbl=document.getElementById('listings-table');const err=document.getElementById('listings-error');const ld=document.getElementById('listings-loading');err.style.display='none';tbl.innerHTML='';ld.style.display='block';ld.textContent='Loading from local file...';try{const res=await fetch('/api/local-listings');const data=await res.json();ld.style.display='none';const listings=data.listings||[];if(!listings.length){tbl.innerHTML='<p style="color:#aaa;font-size:13px">No listings yet.</p>';return;}renderListingsTable(listings,'local');}catch(e){ld.style.display='none';err.textContent='Error: '+e.message;err.style.display='block';}}
+async function syncListings(){const tbl=document.getElementById('listings-table');const err=document.getElementById('listings-error');const ld=document.getElementById('listings-loading');err.style.display='none';tbl.innerHTML='';ld.style.display='block';ld.textContent='Syncing with eBay...';try{const res=await fetch('/api/sync-to-local',{method:'POST'});const data=await res.json();ld.style.display='none';if(data.error){err.textContent=data.error;err.style.display='block';return;}renderListingsTable(data.listings||[],'local');}catch(e){ld.style.display='none';err.textContent='Error: '+e.message;err.style.display='block';}}
+function renderListingsTable(listings,source){
+  const tbl=document.getElementById('listings-table');
+  const rows=listings.map(function(l){
+    let displayPrice,rawPrice,status,offerId,listingId;
+    if(source==='local'){
+      rawPrice=l.price||'';displayPrice='$'+rawPrice;
+      status=l.status||'PUBLISHED';offerId=l.offerId||'';listingId=l.listingId||'';
+    }else{
+      const offer=l.offer||{};
+      rawPrice=offer.pricingSummary&&offer.pricingSummary.price?offer.pricingSummary.price.value:'';
+      displayPrice=rawPrice?'$'+rawPrice:'—';
+      status=offer.status||'—';offerId=offer.offerId||'';
+      listingId=offer.listing&&offer.listing.listingId?offer.listing.listingId:null;
+    }
+    const ebayUrl=l.ebayUrl||(listingId?'https://www.ebay.com/itm/'+listingId:null);
+    const viewBtn=ebayUrl?'<a href="'+ebayUrl+'" target="_blank" style="color:#4ecca3;font-size:12px;padding:3px 6px">View</a>':'';
+    const editData=JSON.stringify({title:l.title,imageUrl:l.imageUrl||'',price:rawPrice,quantity:1,description:''});
+    const editBtn='<button onclick=\'editListing("'+l.sku+'","'+offerId+'",'+editData+')\' style="background:#16213e;border:1px solid #4ecca3;color:#4ecca3;padding:3px 10px;border-radius:4px;cursor:pointer;font-size:12px">Edit</button>';
+    const repriceBtn='<button onclick=\'quickReprice("'+l.sku+'","'+offerId+'","'+rawPrice+'")\' style="background:#16213e;border:1px solid #f5a623;color:#f5a623;padding:3px 10px;border-radius:4px;cursor:pointer;font-size:12px">Reprice</button>';
+    const deleteBtn='<button onclick=\'deleteListing("'+l.sku+'","'+offerId+'","'+status+'")\' style="background:#16213e;border:1px solid #e94560;color:#e94560;padding:3px 10px;border-radius:4px;cursor:pointer;font-size:12px">Delete</button>';
+    return'<tr style="border-bottom:1px solid #16213e">'
+      +'<td style="padding:8px;max-width:280px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+l.title+'</td>'
+      +'<td style="padding:8px;text-align:center">'+displayPrice+'</td>'
+      +'<td style="padding:8px;text-align:center;color:'+(status==='PUBLISHED'?'#4ecca3':'#aaa')+'">'+status+'</td>'
+      +'<td style="padding:8px;text-align:center"><div style="display:flex;gap:4px;justify-content:center;flex-wrap:wrap">'+viewBtn+editBtn+repriceBtn+deleteBtn+'</div></td>'
+      +'</tr>';
+  });
+  tbl.innerHTML='<table style="width:100%;border-collapse:collapse;font-size:13px">'
+    +'<thead><tr style="color:#4ecca3;border-bottom:1px solid #16213e">'
+    +'<th style="text-align:left;padding:8px">Title</th>'
+    +'<th style="padding:8px">Price</th>'
+    +'<th style="padding:8px">Status</th>'
+    +'<th style="padding:8px">Actions</th>'
+    +'</tr></thead><tbody>'+rows.join('')+'</tbody></table>';
+}
+
+// ── Product Finder ────────────────────────────────────────
+function decodeHtml(str){if(!str)return'';const t=document.createElement('textarea');t.innerHTML=str;return t.value;}
+let finderProducts=[];
+let finderSelected=new Set();
+let listedAsins=new Set();
+let listedTitleWords=[];
+let listedModelCodes=[];
+
+function titleWordSet(title){
+  // Include 3+ char words and strip common filler words that cause false positives
+  const STOP=new Set(['the','and','for','with','from','this','that','are','new','set','lot','two','one','has','per']);
+  return new Set(
+    (title||'').toLowerCase().replace(/[^a-z0-9\s]/g,' ').split(/\s+/)
+    .filter(w=>w.length>=3&&!STOP.has(w))
+  );
+}
+
+function extractModelCodes(title){
+  // e.g. "Q20i", "P30i", "EF11S", "5th" — letter+number combos that identify a specific model
+  return new Set((title||'').match(/\b(?:[a-z]+\d+[a-z]*|\d+[a-z]+)\b/gi)||[]).size
+    ? new Set([...(title||'').matchAll(/\b(?:[a-z]+\d+[a-z]*|\d+[a-z]+)\b/gi)].map(m=>m[0].toLowerCase()))
+    : new Set();
+}
+
+function isAlreadyListed(p){
+  // 1. Exact ASIN match
+  if(p.asin&&listedAsins.has(p.asin.toUpperCase()))return true;
+  if(!p.title||!listedTitleWords.length)return false;
+  const pSet=titleWordSet(p.title);
+  const pCodes=extractModelCodes(p.title);
+  if(!pSet.size)return false;
+  for(let i=0;i<listedTitleWords.length;i++){
+    const lSet=listedTitleWords[i];
+    if(!lSet.size)continue;
+    // 2. Title word overlap (50% threshold — more forgiving for short/truncated finder titles)
+    const common=[...pSet].filter(w=>lSet.has(w)).length;
+    const overlap=common/Math.min(pSet.size,lSet.size);
+    if(overlap>=0.5)return true;
+    // 3. Model code match: same specific model code (e.g. "Q20i") in both titles
+    if(pCodes.size>0){
+      const lCodes=listedModelCodes[i];
+      if(lCodes&&[...pCodes].some(c=>lCodes.has(c)))return true;
+    }
+  }
+  return false;
+}
+
+async function refreshListedAsins(){
+  try{
+    const r=await fetch('/api/local-listings');
+    const d=await r.json();
+    const listings=d.listings||[];
+    listedAsins=new Set(listings.map(l=>l.asin).filter(Boolean).map(a=>a.toUpperCase()));
+    listedTitleWords=listings.map(l=>titleWordSet(l.title));
+    listedModelCodes=listings.map(l=>extractModelCodes(l.title));
+  }catch(e){}
+}
+
+function updateFinderImportBtn(){
+  const btn=document.getElementById('finder-import-btn');
+  if(!btn)return;
+  if(finderSelected.size>0){btn.style.display='inline-block';btn.textContent='📥 Import Selected ('+finderSelected.size+')';}
+  else{btn.style.display='none';}
+}
+
+function toggleFinderSelect(asin,e){
+  if(e){e.stopPropagation();}
+  if(finderSelected.has(asin))finderSelected.delete(asin);
+  else finderSelected.add(asin);
+  updateFinderImportBtn();
+  // Re-render just the card border/checkbox without full redraw
+  const el=document.getElementById('finder-card-'+asin);
+  if(el){
+    const sel=finderSelected.has(asin);
+    el.style.border='2px solid '+(sel?'#4ecca3':'transparent');
+    el.style.background=sel?'#0a2a1a':'#0f3460';
+    const cb=el.querySelector('.finder-cb');
+    if(cb){cb.style.background=sel?'#4ecca3':'rgba(0,0,0,0.55)';cb.style.borderColor=sel?'#4ecca3':'#666';cb.textContent=sel?'✓':'';}
+  }
+}
+
+function selectAllFinder(){
+  const hideBlocked=document.getElementById('finder-hide-blocked').checked;
+  const hideListed=document.getElementById('finder-hide-listed').checked;
+  const minProfit=parseFloat(document.getElementById('finder-min-profit').value)||0;
+  function isClientBlocked(p){
+    const title=(p.title||'').toLowerCase();
+    const asin=(p.asin||'').toUpperCase();
+    if(blocklistData.asins&&blocklistData.asins.map(a=>a.toUpperCase()).includes(asin))return true;
+    for(const brand of(blocklistData.brands||[])){if(title.includes(brand.toLowerCase()))return true;}
+    for(const kw of(blocklistData.keywords||[])){if(title.includes(kw.toLowerCase()))return true;}
+    return false;
+  }
+  const visible=finderProducts.filter(p=>{
+    if(hideBlocked&&(p.blocked||isClientBlocked(p)))return false;
+    if(hideListed&&isAlreadyListed(p))return false;
+    if(p.estimatedProfit!==null&&parseFloat(p.estimatedProfit)<minProfit)return false;
+    return true;
+  });
+  const allSel=visible.every(p=>finderSelected.has(p.asin));
+  if(allSel){visible.forEach(p=>finderSelected.delete(p.asin));}
+  else{visible.forEach(p=>finderSelected.add(p.asin));}
+  updateFinderImportBtn();
+  renderFinderResults();
+}
+
+function renderFinderResults(){
+  const hideBlocked=document.getElementById('finder-hide-blocked').checked;
+  const minProfit=parseFloat(document.getElementById('finder-min-profit').value)||0;
+  const results=document.getElementById('finder-results');
+  const counter=document.getElementById('finder-count');
+  if(!finderProducts.length){results.innerHTML='';counter.textContent='';return;}
+
+  const hideListed=document.getElementById('finder-hide-listed').checked;
+  function isClientBlocked(p){
+    const title=(p.title||'').toLowerCase();
+    const asin=(p.asin||'').toUpperCase();
+    if(blocklistData.asins&&blocklistData.asins.map(a=>a.toUpperCase()).includes(asin)) return true;
+    for(const brand of (blocklistData.brands||[])){if(title.includes(brand.toLowerCase())) return true;}
+    for(const kw of (blocklistData.keywords||[])){if(title.includes(kw.toLowerCase())) return true;}
+    return false;
+  }
+  const visible=finderProducts.filter(p=>{
+    if(hideBlocked&&(p.blocked||isClientBlocked(p)))return false;
+    if(hideListed&&isAlreadyListed(p))return false;
+    if(p.estimatedProfit!==null&&parseFloat(p.estimatedProfit)<minProfit)return false;
+    return true;
+  });
+  const blocked=finderProducts.filter(p=>p.blocked||isClientBlocked(p)).length;
+  const alreadyListed=finderProducts.filter(p=>!(p.blocked||isClientBlocked(p))&&isAlreadyListed(p)).length;
+  const hiddenParts=[];
+  if(blocked)hiddenParts.push(blocked+' risk'+(blocked>1?'s':''));
+  if(hideListed&&alreadyListed)hiddenParts.push(alreadyListed+' already listed');
+  counter.textContent='Showing '+visible.length+' of '+finderProducts.length+(hiddenParts.length?' · '+hiddenParts.join(', ')+' hidden':'');
+
+  if(!visible.length){
+    results.innerHTML='<p style="color:#aaa;font-size:13px;grid-column:1/-1">'+(hideBlocked&&blocked?'All '+blocked+' products in this batch were flagged as risks. Try another category or turn off the filter to review them.':'No products match your filters.')+'</p>';
+    return;
+  }
+  results.innerHTML=visible.map(p=>{
+    const title=escHtml(decodeHtml(p.title));
+    const isListed=isAlreadyListed(p);
+
+    // ── Confidence score ──────────────────────────────────
+    let score=50; // baseline
+    const reasons=[];
+    if(p.price){score+=15;}else{score-=20;reasons.push({label:'No price',color:'#f5a623'});}
+    if(p.imageUrl){score+=10;}else{score-=10;reasons.push({label:'No image',color:'#f5a623'});}
+    if(p.estimatedProfit!==null){
+      const ep=parseFloat(p.estimatedProfit);
+      if(ep>=15)score+=20;
+      else if(ep>=8)score+=12;
+      else if(ep>=3)score+=4;
+      else{score-=15;reasons.push({label:'Low margin',color:'#e94560'});}
+    }else{score-=5;}
+    if(p.tiktokTrend)score+=5; // momentum signal
+    if((p.title||'').length<30){score-=10;reasons.push({label:'Short title',color:'#aaa'});} // truncated/low-quality title
+    if(isListed){score-=10;reasons.push({label:'Listed',color:'#f5a623'});}
+    score=Math.max(0,Math.min(100,score));
+    const scoreColor=score>=70?'#4ecca3':score>=45?'#f5a623':'#e94560';
+    const scoreBar='<div style="display:flex;align-items:center;gap:5px;margin:2px 0">'
+      +'<div style="flex:1;background:#1a1a2e;border-radius:3px;height:4px">'
+      +'<div style="background:'+scoreColor+';height:4px;border-radius:3px;width:'+score+'%"></div></div>'
+      +'<span style="font-size:10px;color:'+scoreColor+';font-weight:bold;min-width:28px;text-align:right">'+score+'</span></div>';
+
+    const profit=p.estimatedProfit!==null
+      ?'<div style="color:'+(parseFloat(p.estimatedProfit)>=5?'#4ecca3':parseFloat(p.estimatedProfit)>0?'#f5a623':'#e94560')+';font-size:12px;font-weight:bold">Est. profit: $'+escHtml(p.estimatedProfit)+'</div>'
+      :'';
+    const price=p.price
+      ?'<div style="font-size:11px;color:#aaa">Amazon: $'+escHtml(p.price)+' → eBay: $'+escHtml(p.suggestedPrice)+'</div>'
+      :'<div style="font-size:11px;color:#555;font-style:italic">Click Import to see price</div>';
+    const img=p.imageUrl
+      ?'<img src="'+escHtml(p.imageUrl)+'" style="width:100%;height:130px;object-fit:contain;background:#1a1a2e;border-radius:6px;display:block"/>'
+      :'<div style="width:100%;height:130px;background:#1a1a2e;border-radius:6px;display:flex;align-items:center;justify-content:center;color:#555;font-size:11px">No image</div>';
+    const safeAsin=escHtml(p.asin);
+    const safeUrl=escHtml(p.amazonUrl);
+
+    // ── Blocked card: explainability badges instead of generic "Blocked" ──
+    if(p.blocked){
+      // Parse blockReason into specific badge(s)
+      const reason=p.blockReason||'';
+      const explainBadges=[];
+      if(/vero/i.test(reason))explainBadges.push({label:'⚠️ VeRO',color:'#e94560',bg:'#3a0a0a'});
+      if(/brand/i.test(reason))explainBadges.push({label:'🚫 Blocked Brand',color:'#e94560',bg:'#3a0a0a'});
+      if(/keyword/i.test(reason))explainBadges.push({label:'🚫 Blocked Keyword',color:'#e94560',bg:'#3a0a0a'});
+      if(/fraud/i.test(reason))explainBadges.push({label:'⚠️ Fraud Risk',color:'#f5a623',bg:'#2a1800'});
+      if(!explainBadges.length)explainBadges.push({label:'🚫 '+reason.substring(0,30),color:'#e94560',bg:'#3a0a0a'});
+      const badgeHtml=explainBadges.map(b=>'<div style="font-size:10px;color:'+b.color+';background:'+b.bg+';border:1px solid '+b.color+';border-radius:3px;padding:2px 6px;display:inline-block;margin:1px;font-weight:bold">'+b.label+'</div>').join('');
+      return'<div style="background:#1a0a0a;border-radius:10px;padding:12px;display:flex;flex-direction:column;gap:5px;border:1px solid #e94560;opacity:0.7">'
+        +img.replace('background:#1a1a2e','background:#1a0a0a')
+        +'<div style="font-size:11px;color:#bbb;line-height:1.4;height:44px;overflow:hidden">'+title+'</div>'
+        +'<div>'+badgeHtml+'</div>'
+        +scoreBar
+        +'<div style="margin-top:auto;background:#333;border:none;color:#666;padding:8px;border-radius:6px;font-size:12px;text-align:center;font-weight:bold">Risk — Hidden</div>'
+        +'</div>';
+    }
+
+    const sel=finderSelected.has(p.asin);
+    const tiktokBadge=p.tiktokTrend?'<div style="font-size:10px;color:#fff;background:#e94560;border-radius:3px;padding:1px 5px;display:inline-block;margin-bottom:3px;font-weight:bold">📈 Hot Mover</div>':'';
+    const listedBadge=isListed?'<div style="font-size:10px;color:#1a1a2e;background:#f5a623;border-radius:3px;padding:1px 5px;display:inline-block;margin-bottom:3px;font-weight:bold">📦 Already Listed</div>':'';
+    // Explainability badges for non-blocked cards
+    const warnBadges=reasons.filter(r=>r.label!=='Listed').map(r=>'<div style="font-size:9px;color:'+r.color+';background:#0f3460;border:1px solid '+r.color+'44;border-radius:3px;padding:1px 4px;display:inline-block;margin:1px">'+r.label+'</div>').join('');
+    const cb='<div class="finder-cb" onclick="toggleFinderSelect(\''+safeAsin+'\',event)" style="position:absolute;top:7px;left:7px;width:20px;height:20px;border:2px solid '+(sel?'#4ecca3':'#666')+';border-radius:4px;background:'+(sel?'#4ecca3':'rgba(0,0,0,0.55)')+';cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:bold;color:#1a1a2e;z-index:3">'+(sel?'✓':'')+'</div>';
+    return'<div id="finder-card-'+safeAsin+'" onclick="toggleFinderSelect(\''+safeAsin+'\',event)" style="position:relative;background:'+(sel?'#0a2a1a':'#0f3460')+';border:2px solid '+(sel?'#4ecca3':'transparent')+';border-radius:10px;padding:12px;display:flex;flex-direction:column;gap:5px;cursor:pointer">'
+      +cb+img
+      +'<div style="display:flex;flex-wrap:wrap;gap:2px;min-height:14px">'+tiktokBadge+listedBadge+warnBadges+'</div>'
+      +'<div style="font-size:11px;color:#eee;line-height:1.4;height:44px;overflow:hidden" title="'+title+'">'+title+'</div>'
+      +price+profit+scoreBar
+      +'<button onclick="event.stopPropagation();finderImport(\''+safeUrl+'\')" style="margin-top:auto;background:#e94560;border:none;color:white;padding:8px;border-radius:6px;cursor:pointer;font-size:12px;font-weight:bold">Import →</button>'
+      +'</div>';
+  }).join('');
+  updateFinderImportBtn();
+}
+
+let finderMode='amazon';
+
+function setFinderMode(mode){
+  finderMode=mode;
+  document.getElementById('finder-mode-amazon').style.background=mode==='amazon'?'#e94560':'#16213e';
+  document.getElementById('finder-mode-amazon').style.color=mode==='amazon'?'white':'#aaa';
+  document.getElementById('finder-mode-tiktok').style.background=mode==='tiktok'?'#4ecca3':'#16213e';
+  document.getElementById('finder-mode-tiktok').style.color=mode==='tiktok'?'#1a1a2e':'#aaa';
+  document.getElementById('finder-cats-amazon').style.display=mode==='amazon'?'flex':'none';
+  document.getElementById('finder-cats-tiktok').style.display=mode==='tiktok'?'flex':'none';
+  document.getElementById('finder-tiktok-banner').style.display=mode==='tiktok'?'block':'none';
+  // Clear results and selection when switching modes
+  finderProducts=[];finderSelected.clear();
+  document.getElementById('finder-results').innerHTML='';
+  document.getElementById('finder-count').textContent='';
+  document.getElementById('finder-error').style.display='none';
+  document.getElementById('finder-bulk-progress').style.display='none';
+  updateFinderImportBtn();
+}
+
+async function loadFinderCategory(cat){
+  const loading=document.getElementById('finder-loading');
+  const error=document.getElementById('finder-error');
+  const results=document.getElementById('finder-results');
+  loading.style.display='block';error.style.display='none';results.innerHTML='';
+  document.getElementById('finder-count').textContent='';
+  document.querySelectorAll('#finder-cats-amazon .template-btn').forEach(b=>b.style.background='');
+  try{
+    await Promise.all([loadBlocklist(), refreshListedAsins()]);
+    const res=await fetch('/api/product-finder?category='+cat);
+    const data=await res.json();
+    loading.style.display='none';
+    if(data.error){error.textContent=data.error;error.style.display='block';return;}
+    finderProducts=data.products||[];
+    renderFinderResults();
+  }catch(e){loading.style.display='none';error.textContent='Error: '+e.message;error.style.display='block';}
+}
+
+async function loadTikTokTrends(type){
+  const loading=document.getElementById('finder-loading');
+  const error=document.getElementById('finder-error');
+  loading.style.display='block';error.style.display='none';
+  document.getElementById('finder-results').innerHTML='';
+  document.getElementById('finder-count').textContent='';
+  document.querySelectorAll('#finder-cats-tiktok .template-btn').forEach(b=>b.style.background='');
+  try{
+    await Promise.all([loadBlocklist(), refreshListedAsins()]);
+    const res=await fetch('/api/tiktok-trends?type='+type);
+    const data=await res.json();
+    loading.style.display='none';
+    if(data.error){error.textContent=data.error;error.style.display='block';return;}
+    finderProducts=(data.products||[]).map(p=>({...p,tiktokTrend:true}));
+    renderFinderResults();
+  }catch(e){loading.style.display='none';error.textContent='Error: '+e.message;error.style.display='block';}
+}
+
+async function finderImport(url){
+  const tab=Array.from(document.querySelectorAll('.tab')).find(t=>(t.getAttribute('onclick')||'').includes("'amazon'"));
+  if(tab)showTab('amazon',tab);
+  document.getElementById('amazon-url').value=url;
+  await importAmazon();
+}
+
+async function finderBulkImport(){
+  if(!finderSelected.size){alert('Select at least one product first.');return;}
+  // Re-validate selection against current filters before importing
+  const hideBlocked=document.getElementById('finder-hide-blocked').checked;
+  const hideListed=document.getElementById('finder-hide-listed').checked;
+  function isClientBlockedImport(p){
+    const title=(p.title||'').toLowerCase();
+    for(const brand of(blocklistData.brands||[])){if(title.includes(brand.toLowerCase()))return true;}
+    for(const kw of(blocklistData.keywords||[])){if(title.includes(kw.toLowerCase()))return true;}
+    return false;
+  }
+  const selectedProducts=finderProducts.filter(p=>finderSelected.has(p.asin));
+  const skipped=[];
+  const validProducts=selectedProducts.filter(p=>{
+    if(hideBlocked&&(p.blocked||isClientBlockedImport(p))){skipped.push(p.title);return false;}
+    if(hideListed&&isAlreadyListed(p)){skipped.push(p.title);return false;}
+    return true;
+  });
+  if(skipped.length>0) console.log('[bulk import] Skipped '+skipped.length+' filtered items');
+  if(!validProducts.length){alert('All selected items are filtered out (blocked or already listed). Nothing to import.');return;}
+  const asins=validProducts.map(p=>p.asin);
+  const total=asins.length;
+  // Show progress bar
+  const prog=document.getElementById('finder-bulk-progress');
+  const bar=document.getElementById('finder-bulk-bar');
+  const status=document.getElementById('finder-bulk-status');
+  const log=document.getElementById('finder-bulk-log');
+  prog.style.display='block';log.innerHTML='';
+  // Disable button during run
+  const btn=document.getElementById('finder-import-btn');
+  btn.disabled=true;btn.textContent='⏳ Importing...';
+
+  const results=[];
+  for(let i=0;i<asins.length;i++){
+    const asin=asins[i];
+    const url='https://www.amazon.com/dp/'+asin;
+    status.textContent=(i+1)+' / '+total;
+    bar.style.width=Math.round(((i+0.5)/total)*100)+'%';
+    const logLine=document.createElement('div');
+    logLine.textContent='🔄 ['+asin+'] Fetching...';
+    log.appendChild(logLine);log.scrollTop=log.scrollHeight;
+    try{
+      const res=await fetch('/api/amazon',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({url})});
+      const data=await res.json();
+      if(data.error){logLine.textContent='❌ ['+asin+'] '+data.error;logLine.style.color='#e94560';}
+      else{logLine.textContent='✅ ['+asin+'] '+data.ebayTitle.substring(0,50)+'...';logLine.style.color='#4ecca3';results.push(data);}
+    }catch(e){logLine.textContent='❌ ['+asin+'] '+e.message;logLine.style.color='#e94560';}
+    bar.style.width=Math.round(((i+1)/total)*100)+'%';
+  }
+
+  // Now add successful results to the queue (same logic as amazonBulkAddAllToQueue)
+  if(results.length){
+    status.textContent='Uploading images...';
+    for(const data of results){
+      let hostedImg='';
+      if(data.imageUrl){
+        try{
+          const r=await fetch('/api/rehost-image',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({url:data.imageUrl})});
+          const d=await r.json();if(d.hostedUrl)hostedImg=d.hostedUrl;
+        }catch(e){}
+      }
+      const cleanTitle=decodeHtml(data.ebayTitle||'');
+      const smart=getSmartSpecifics(cleanTitle);
+      listingQueue.push({
+        title:cleanTitle,description:data.ebayDescription||'',
+        price:data.suggestedEbayPrice||'',quantity:'1',category:'',
+        condition:'NEW',type:'',imageUrl:hostedImg||data.imageUrl||'',weight:'1',
+        mpn:'Does Not Apply',countryMfg:'China',upc:'',itemSpecifics:smart,
+        asin:data.asin||null,sourceUrl:data.asin?'https://www.amazon.com/dp/'+data.asin:null
+      });
+    }
+    saveQueue();renderQueue();
+    status.textContent='Done — '+results.length+' added to queue!';
+    bar.style.width='100%';
+    // Clear selection
+    finderSelected.clear();updateFinderImportBtn();renderFinderResults();
+    // Go to create tab
+    setTimeout(()=>{
+      prog.style.display='none';
+      const createTab=Array.from(document.querySelectorAll('.tab')).find(t=>(t.getAttribute('onclick')||'').includes("'create'"));
+      if(createTab)showTab('create',createTab);
+    },1800);
+  }else{
+    status.textContent='No products imported successfully.';
+  }
+  btn.disabled=false;updateFinderImportBtn();
+}
+
+// ── Block Rules Manager ───────────────────────────────────
+let blocklistData={brands:[],keywords:[],asins:[]};
+async function loadBlocklist(){
+  try{const r=await fetch('/api/blocklist');blocklistData=await r.json();}catch{}
+  renderBlocklist();
+}
+function renderBlocklist(){
+  ['brands','keywords'].forEach(type=>{
+    const el=document.getElementById('bl-'+type);
+    if(!el)return;
+    if(!blocklistData[type]||!blocklistData[type].length){
+      el.innerHTML='<span style="color:#555;font-style:italic">None added</span>';return;
+    }
+    el.innerHTML=blocklistData[type].map(v=>
+      '<span style="display:inline-flex;align-items:center;gap:4px;background:#1a1a2e;border:1px solid #333;border-radius:4px;padding:2px 8px;margin:2px;font-size:11px">'
+      +v
+      +'<button onclick="removeBlockRule(\''+type+'\',\''+v+'\')" style="background:none;border:none;color:#e94560;cursor:pointer;font-size:13px;line-height:1;padding:0 2px">×</button>'
+      +'</span>'
+    ).join('');
+  });
+}
+function toggleBlockRules(){
+  const panel=document.getElementById('block-rules-panel');
+  if(panel.style.display==='none'){panel.style.display='block';loadBlocklist();}
+  else{panel.style.display='none';}
+}
+async function addBlockRule(type,inputId){
+  const input=document.getElementById(inputId);
+  const value=input.value.trim().toLowerCase();
+  if(!value)return;
+  try{
+    const r=await fetch('/api/blocklist',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'add',type,value})});
+    const d=await r.json();
+    if(d.success){blocklistData=d.blocklist;renderBlocklist();input.value='';
+      // Re-render finder results with updated rules
+      if(finderProducts.length){alert('Block rule added. Reload the category to apply it to new searches.');}
+    }else{alert('Error: '+d.error);}
+  }catch(e){alert('Error: '+e.message);}
+}
+async function removeBlockRule(type,value){
+  try{
+    const r=await fetch('/api/blocklist',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'remove',type,value})});
+    const d=await r.json();
+    if(d.success){blocklistData=d.blocklist;renderBlocklist();}
+  }catch(e){alert('Error: '+e.message);}
+}
+
+// ── Amazon Importer ───────────────────────────────────────
+let amazonData=null;
+let amazonBulkResults=[];
+async function importAmazon(){
+  const url=document.getElementById('amazon-url').value.trim();
+  const rd=document.getElementById('amazon-result');const ed=document.getElementById('amazon-error');const ld=document.getElementById('amazon-loading');
+  rd.style.display='none';ed.style.display='none';ld.style.display='block';
+  if(!url){ld.style.display='none';ed.textContent='Please enter an Amazon URL';ed.style.display='block';return;}
+  try{
+    const res=await fetch('/api/amazon',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({url})});
+    const data=await res.json();ld.style.display='none';
+    if(data.error){ed.textContent='Error: '+data.error;ed.style.display='block';return;}
+    amazonData=data;
+    document.getElementById('az-title').textContent=data.ebayTitle;
+    document.getElementById('az-price').textContent=data.price?'$'+data.price:'N/A';
+    document.getElementById('az-ebay-price').textContent=data.suggestedEbayPrice?'$'+data.suggestedEbayPrice:'N/A';
+    document.getElementById('az-profit').textContent=data.estimatedProfit?'$'+data.estimatedProfit:'N/A';
+    // Safety check
+    const safetyRes=await fetch('/api/check-product',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({title:data.title,asin:data.asin,price:data.price})});
+    const safety=await safetyRes.json();
+    const safetyBanner=document.getElementById('az-safety-banner');
+    if(safety.blocked){
+      safetyBanner.style.display='block';safetyBanner.style.background='#3a0a0a';safetyBanner.style.color='#e94560';
+      safetyBanner.innerHTML='🚫 <strong>Do not list this product.</strong> '+safety.reason;
+    }else{
+      safetyBanner.style.display='block';safetyBanner.style.background='#0a1a0a';safetyBanner.style.color='#4ecca3';
+      safetyBanner.innerHTML='✅ <strong>Looks safe to list.</strong> No VeRO or policy issues detected.';
+    }
+    const thumb=document.getElementById('az-thumb');
+    const imgStatus=document.getElementById('az-img-status');
+    if(data.imageUrl){thumb.src=data.imageUrl;thumb.style.display='block';imgStatus.style.display='block';imgStatus.textContent='✅ Image ready — will auto-upload on Send';}
+    else{thumb.style.display='none';imgStatus.style.display='none';}
+    rd.style.display='block';
+  }catch(e){ld.style.display='none';ed.textContent='Error: '+e.message;ed.style.display='block';}
+}
+async function sendAmazonToListing(){
+  if(!amazonData)return;
+  document.getElementById('title').value=decodeHtml(amazonData.ebayTitle||'');
+  document.getElementById('description').value=amazonData.ebayDescription||'';
+  document.getElementById('price').value=amazonData.suggestedEbayPrice||'';
+  // Store source cost so margin presets work
+  document.getElementById('amazon-cost').value=amazonData.price||amazonData.suggestedEbayPrice||'';
+  document.getElementById('price-preset-label').textContent='';
+  document.getElementById('type').value=getSmartType(amazonData.ebayTitle||'');
+  document.getElementById('asin').value=amazonData.asin||'';
+  document.getElementById('amazon-url').dataset.lastImport=document.getElementById('amazon-url').value.trim();
+  const smart=getSmartSpecifics(amazonData.ebayTitle||'');
+  document.getElementById('itemSpecifics').value=smart;
+  setListingImage('');
+  const createTab=Array.from(document.querySelectorAll('.tab')).find(t=>(t.getAttribute('onclick')||'').includes("'create'"));
+  if(createTab)showTab('create',createTab);
+  // Auto-rehost Amazon image (no manual step needed)
+  if(amazonData.imageUrl){
+    const label=document.getElementById('listing-img-label');
+    label.textContent='Uploading image... ⏳';label.style.color='#aaa';
+    fetch('/api/rehost-image',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({url:amazonData.imageUrl})})
+      .then(r=>r.json()).then(d=>{if(d.hostedUrl)setListingImage(d.hostedUrl);}).catch(()=>{});
+  }
+  // Duplicate check (fire and forget)
+  checkDuplicate(amazonData.ebayTitle||'');
+  // Auto-detect category + aspects
+  const aspStatus=document.getElementById('aspects-status');
+  aspStatus.style.display='block';aspStatus.style.color='#aaa';aspStatus.textContent='Auto-detecting category...';
+  try{
+    const catRes=await fetch('/api/category-suggestions?q='+encodeURIComponent(amazonData.ebayTitle||''));
+    const catData=await catRes.json();
+    if(catData.suggestions&&catData.suggestions.length){
+      const top=catData.suggestions[0];
+      document.getElementById('category').value=top.id;
+      recallWeightForCategory(top.id);
+      const aspRes=await fetch('/api/category-aspects?category_id='+encodeURIComponent(top.id));
+      const aspData=await aspRes.json();
+      if(aspData.aspects&&aspData.aspects.length){
+        const existing=document.getElementById('itemSpecifics').value;
+        const existingKeys=existing.split('\n').map(l=>l.split('=')[0].trim().toLowerCase()).filter(Boolean);
+        // Alias map: if any alias of an eBay aspect key is already filled, skip it
+        const ASPECT_ALIASES={'brand':['compatible brand','manufacturer'],'compatible brand':['brand','manufacturer'],'colour':['color'],'color':['colour']};
+        const toAdd=aspData.aspects.filter(a=>{const k=a.name.toLowerCase();if(existingKeys.includes(k))return false;const aliases=ASPECT_ALIASES[k]||[];return!aliases.some(al=>existingKeys.includes(al));});
+        if(toAdd.length){const lines=toAdd.map(a=>a.name+'='+(a.values.length?a.values[0]:''));document.getElementById('itemSpecifics').value=(existing.trim()?existing.trim()+'\n':'')+lines.join('\n');}
+        aspStatus.style.color='#4ecca3';aspStatus.textContent='✅ Category auto-set ('+top.id+') · '+aspData.aspects.length+' required aspects loaded';
+      }else{aspStatus.style.color='#4ecca3';aspStatus.textContent='✅ Category auto-set ('+top.id+')';}
+    }
+  }catch(e){aspStatus.style.color='#e94560';aspStatus.textContent='Auto-detect failed — use Find Category';}
+}
+async function amazonBulkImportAll(){
+  const raw=document.getElementById('amazon-bulk-urls').value.trim();
+  const urls=raw.split('\n').map(u=>u.trim()).filter(u=>u.includes('amazon.com')||u.match(/^[A-Z0-9]{10}$/i));
+  if(!urls.length){alert('No valid Amazon URLs found.');return;}
+  amazonBulkResults=urls.map(url=>({url,data:null,status:'pending',error:''}));
+  renderAmazonBulkResults();
+  document.getElementById('amazon-bulk-queue-btn').style.display='none';
+  for(let i=0;i<urls.length;i++){
+    amazonBulkResults[i].status='importing';renderAmazonBulkResults();
+    try{
+      const res=await fetch('/api/amazon',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({url:urls[i]})});
+      const data=await res.json();
+      if(data.error){amazonBulkResults[i].status='error';amazonBulkResults[i].error=data.error;}
+      else{amazonBulkResults[i].data=data;amazonBulkResults[i].status='done';}
+    }catch(e){amazonBulkResults[i].status='error';amazonBulkResults[i].error=e.message;}
+    renderAmazonBulkResults();
+  }
+  document.getElementById('amazon-bulk-queue-btn').style.display='inline-block';
+}
+function renderAmazonBulkResults(){
+  const div=document.getElementById('amazon-bulk-results');
+  if(!amazonBulkResults.length){div.innerHTML='';return;}
+  div.innerHTML=amazonBulkResults.map((r,i)=>{
+    const icon=r.status==='pending'?'⏳':r.status==='importing'?'🔄':r.status==='error'?'❌':'✅';
+    const title=r.data?r.data.ebayTitle:r.url.substring(0,60)+'...';
+    const profit=r.data&&r.data.estimatedProfit?'Est. profit: <span style="color:#4ecca3">$'+r.data.estimatedProfit+'</span> · ':'';
+    const price=r.data&&r.data.suggestedEbayPrice?'eBay: <span style="color:#4ecca3">$'+r.data.suggestedEbayPrice+'</span>':'';
+    const img=r.data&&r.data.imageUrl?'<img src="'+r.data.imageUrl+'" style="width:40px;height:40px;object-fit:cover;border-radius:4px;border:1px solid #4ecca3;flex-shrink:0"/>':'';
+    return'<div style="background:#0f3460;border-radius:8px;padding:10px;margin-bottom:8px;display:flex;gap:10px;align-items:center">'
+      +img+'<div style="flex:1;min-width:0"><div style="font-size:13px;color:#eee">'+icon+' '+title+'</div>'
+      +(r.data?'<div style="font-size:12px;color:#aaa;margin-top:3px">'+profit+price+'</div>':'')
+      +(r.error?'<div style="font-size:11px;color:#e94560;margin-top:3px">'+r.error+'</div>':'')
+      +'</div></div>';
+  }).join('');
+}
+async function amazonBulkAddAllToQueue(){
+  const ready=amazonBulkResults.filter(r=>r.status==='done'&&r.data);
+  if(!ready.length){alert('No items ready.');return;}
+  const btn=document.getElementById('amazon-bulk-queue-btn');
+  btn.textContent='Uploading images...';btn.disabled=true;
+  for(const r of ready){
+    let hostedImg='';
+    if(r.data.imageUrl){
+      try{
+        const res=await fetch('/api/rehost-image',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({url:r.data.imageUrl})});
+        const d=await res.json();if(d.hostedUrl)hostedImg=d.hostedUrl;
+      }catch(e){}
+    }
+    const cleanTitle=decodeHtml(r.data.ebayTitle||'');
+    const smart=getSmartSpecifics(cleanTitle);
+    listingQueue.push({
+      title:cleanTitle,description:r.data.ebayDescription||'',
+      price:r.data.suggestedEbayPrice||'',quantity:'1',category:'',
+      condition:'NEW',type:'',imageUrl:hostedImg,weight:'1',
+      mpn:'Does Not Apply',countryMfg:'China',upc:'',itemSpecifics:smart
+    });
+  }
+  saveQueue();renderQueue();
+  btn.textContent='Add All to Queue';btn.disabled=false;
+  const createTab=Array.from(document.querySelectorAll('.tab')).find(t=>(t.getAttribute('onclick')||'').includes("'create'"));
+  if(createTab)showTab('create',createTab);
+  alert(ready.length+' item(s) added to queue! Review item specifics, weight, and category before listing.');
+}
+
+// ── SEO Title Scorer ──────────────────────────────────────
+function updateCharCount(){const t=document.getElementById('title');const c=document.getElementById('title-char-count');if(!t||!c)return;const len=t.value.length;c.textContent=len+'/80';c.style.color=len>=60&&len<=80?'#4ecca3':len>75?'#f5a623':'#555';}
+async function scoreSeoTitle(){
+  const title=document.getElementById('title').value.trim();
+  const box=document.getElementById('seo-result');
+  if(!title){box.style.display='block';box.innerHTML='<span style="color:#e94560">Enter a title first.</span>';return;}
+  box.style.display='block';box.innerHTML='<span style="color:#aaa">Scoring...</span>';
+  try{
+    const res=await fetch('/api/score-title',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({title})});
+    const d=await res.json();
+    const color=d.grade==='A'?'#4ecca3':d.grade==='B'?'#a8e6cf':d.grade==='C'?'#f5a623':'#e94560';
+    const bar='<div style="background:#1a1a2e;border-radius:4px;height:8px;margin:6px 0"><div style="background:'+color+';height:8px;border-radius:4px;width:'+d.score+'%"></div></div>';
+    const tips=d.tips.map(t=>'<div style="color:#ccc;font-size:12px;padding:3px 0">'+t+'</div>').join('');
+    box.innerHTML='<div style="display:flex;align-items:center;gap:12px;margin-bottom:6px">'
+      +'<div style="font-size:28px;font-weight:bold;color:'+color+'">'+d.grade+'</div>'
+      +'<div style="flex:1"><div style="color:#eee;font-size:13px">SEO Score: <strong>'+d.score+'/100</strong> · Length: '+d.length+' chars</div>'+bar+'</div>'
+      +'<button onclick="document.getElementById(\'seo-result\').style.display=\'none\'" style="background:none;border:none;color:#555;cursor:pointer;font-size:16px">×</button>'
+      +'</div>'+tips;
+  }catch(e){box.innerHTML='<span style="color:#e94560">Error: '+e.message+'</span>';}
+}
+
+// ── Auto-Repricer ─────────────────────────────────────────
+async function loadRepricerSettings(){
+  try{
+    const res=await fetch('/api/repricer-settings');
+    const d=await res.json();
+    document.getElementById('repricer-enabled').checked=d.enabled||false;
+    document.getElementById('repricer-drop').value=d.dropPercent||5;
+    document.getElementById('repricer-days').value=d.daysThreshold||7;
+    document.getElementById('repricer-floor').value=d.floorPercent||20;
+  }catch(e){}
+}
+async function saveRepricerSettings(){
+  const settings={
+    enabled:document.getElementById('repricer-enabled').checked,
+    dropPercent:parseFloat(document.getElementById('repricer-drop').value)||5,
+    daysThreshold:parseFloat(document.getElementById('repricer-days').value)||7,
+    floorPercent:parseFloat(document.getElementById('repricer-floor').value)||20
+  };
+  try{
+    await fetch('/api/repricer-settings',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(settings)});
+    const s=document.getElementById('repricer-status');
+    s.style.display='block';s.style.color='#4ecca3';s.textContent='✅ Settings saved';
+    setTimeout(()=>{s.style.display='none';},2000);
+  }catch(e){}
+}
+async function runRepricer(force){
+  const status=document.getElementById('repricer-status');
+  const results=document.getElementById('repricer-results');
+  status.style.display='block';status.style.color='#aaa';status.textContent='⏳ Running repricer...';
+  results.innerHTML='';
+  try{
+    const res=await fetch('/api/run-auto-repricer',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({force:!!force})});
+    const d=await res.json();
+    if(d.skipped){status.style.color='#aaa';status.textContent=d.message;return;}
+    status.style.color='#4ecca3';status.textContent='✅ Done — '+d.repriced+' listing(s) repriced.';
+    results.innerHTML=d.results.map(r=>{
+      const color=r.action==='repriced'?'#4ecca3':r.action==='error'?'#e94560':'#555';
+      const detail=r.action==='repriced'?'$'+r.oldPrice+' → $'+r.newPrice:r.reason||r.error||'';
+      return'<div style="padding:4px 0;border-bottom:1px solid #16213e;color:'+color+'">'+r.title.substring(0,50)+'<span style="float:right">'+detail+'</span></div>';
+    }).join('');
+    loadMyListings();
+  }catch(e){status.style.color='#e94560';status.textContent='Error: '+e.message;}
+}
+
+// ── Orders ────────────────────────────────────────────────
+async function loadOrders(){
+  const list=document.getElementById('orders-list');
+  const err=document.getElementById('orders-error');
+  const ld=document.getElementById('orders-loading');
+  err.style.display='none';ld.style.display='block';list.innerHTML='';
+  try{
+    const res=await fetch('/api/orders');
+    const d=await res.json();
+    ld.style.display='none';
+    if(d.error){err.textContent=d.error;err.style.display='block';return;}
+    if(!d.orders||!d.orders.length){
+      list.innerHTML='<div style="text-align:center;padding:40px;color:#555">'
+        +'<div style="font-size:40px;margin-bottom:12px">📭</div>'
+        +'<div style="font-size:15px;color:#aaa">No orders yet — your listings are live and being indexed.</div>'
+        +'<div style="font-size:13px;color:#555;margin-top:8px">First sales typically come within 1–3 weeks for new accounts.</div>'
+        +'</div>';
+      return;
+    }
+    list.innerHTML=d.orders.map(o=>{
+      const statusColor=o.status==='FULFILLED'?'#4ecca3':o.status==='NOT_STARTED'?'#f5a623':'#aaa';
+      const items=o.items.map(i=>{
+        const sourceBtn=i.sourceUrl?'<a href="'+i.sourceUrl+'" target="_blank" style="display:inline-block;margin-top:6px;background:#e94560;color:white;padding:6px 12px;border-radius:6px;font-size:12px;text-decoration:none;font-weight:bold">🛒 Order from Amazon →</a>':'<span style="color:#555;font-size:12px">No source URL — check Price Watch to link it</span>';
+        return'<div style="padding:8px 0;border-bottom:1px solid #16213e">'
+          +'<div style="color:#eee;font-size:13px">'+i.title+'</div>'
+          +'<div style="color:#aaa;font-size:12px;margin-top:2px">Qty: '+i.quantity+(i.price?' · $'+i.price:'')+'</div>'
+          +sourceBtn+'</div>';
+      }).join('');
+      const trackForm='<div style="margin-top:12px;background:#1a1a2e;border-radius:6px;padding:12px">'
+        +'<div style="font-size:12px;color:#4ecca3;font-weight:bold;margin-bottom:8px">Step 2 — Submit tracking number to eBay</div>'
+        +'<div style="display:flex;gap:8px;flex-wrap:wrap">'
+        +'<select id="carrier-'+o.orderId+'" style="background:#0f3460;border:1px solid #333;border-radius:6px;padding:8px;color:#eee;font-size:13px">'
+        +'<option value="USPS">USPS</option><option value="UPS">UPS</option><option value="FedEx">FedEx</option><option value="Amazon">Amazon Logistics</option>'
+        +'</select>'
+        +'<input type="text" id="tracking-'+o.orderId+'" placeholder="Tracking number" style="flex:1;padding:8px;background:#0f3460;border:1px solid #333;border-radius:6px;color:#eee;font-size:13px"/>'
+        +'<button onclick="submitTracking(\''+o.orderId+'\')" style="background:#4ecca3;color:#1a1a2e;border:none;padding:8px 14px;border-radius:6px;cursor:pointer;font-size:13px;font-weight:bold">Submit</button>'
+        +'</div>'
+        +'<div id="track-status-'+o.orderId+'" style="display:none;font-size:12px;margin-top:6px"></div>'
+        +'</div>';
+      return'<div style="background:#0f3460;border-radius:10px;padding:16px;margin-bottom:14px">'
+        +'<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px">'
+        +'<div><div style="font-size:14px;font-weight:bold;color:#eee">Order #'+o.orderId.substring(0,16)+'...</div>'
+        +'<div style="font-size:12px;color:#aaa;margin-top:3px">'+new Date(o.createdAt).toLocaleString()+' · Buyer: '+o.buyer+'</div></div>'
+        +'<div style="text-align:right"><div style="font-size:16px;color:#4ecca3;font-weight:bold">$'+o.total+'</div>'
+        +'<div style="font-size:12px;color:'+statusColor+';margin-top:2px">'+o.status+'</div></div></div>'
+        +'<div style="font-size:12px;color:#4ecca3;font-weight:bold;margin-bottom:6px">Step 1 — Order from your supplier:</div>'
+        +items
+        +(o.status!=='FULFILLED'?trackForm:'<div style="color:#4ecca3;font-size:13px;margin-top:10px">✅ Order fulfilled</div>')
+        +'</div>';
+    }).join('');
+  }catch(e){ld.style.display='none';err.textContent='Error: '+e.message;err.style.display='block';}
+}
+async function submitTracking(orderId){
+  const tracking=document.getElementById('tracking-'+orderId).value.trim();
+  const carrier=document.getElementById('carrier-'+orderId).value;
+  const statusEl=document.getElementById('track-status-'+orderId);
+  if(!tracking){statusEl.style.display='block';statusEl.style.color='#e94560';statusEl.textContent='Enter a tracking number first.';return;}
+  statusEl.style.display='block';statusEl.style.color='#aaa';statusEl.textContent='Submitting...';
+  try{
+    const res=await fetch('/api/submit-tracking',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({orderId,trackingNumber:tracking,carrier})});
+    const d=await res.json();
+    if(d.success){statusEl.style.color='#4ecca3';statusEl.textContent='✅ Tracking submitted to eBay! Buyer notified.';}
+    else{statusEl.style.color='#e94560';statusEl.textContent='Error: '+(d.error||'Unknown');}
+  }catch(e){statusEl.style.color='#e94560';statusEl.textContent='Error: '+e.message;}
+}
+
+// ── Stock Checker ─────────────────────────────────────────
+async function runStockCheck(){
+  const status=document.getElementById('price-watch-status');
+  const results=document.getElementById('price-watch-results');
+  status.style.display='block';status.textContent='⏳ Checking Amazon stock for all listings... this may take a minute.';
+  results.innerHTML='';
+  try{
+    const res=await fetch('/api/check-stock');
+    const d=await res.json();
+    status.style.display='none';
+    if(d.noAsins){results.innerHTML='<p style="color:#aaa;font-size:13px">No ASINs linked yet — click Find Missing ASINs first.</p>';return;}
+    if(!d.results.length){results.innerHTML='<p style="color:#aaa;font-size:13px">No results.</p>';return;}
+    const checkedAt=d.checkedAt?new Date(d.checkedAt).toLocaleTimeString():'';
+    const outCount=d.results.filter(r=>r.status==='out_of_stock').length;
+    const alertCount=d.results.filter(r=>r.status==='price_alert').length;
+    let summary='<p style="color:#555;font-size:11px;margin-bottom:10px">Stock check · '+checkedAt+'</p>';
+    if(outCount)summary+='<div style="background:#3a0a0a;border:1px solid #e94560;border-radius:6px;padding:10px;margin-bottom:10px;font-size:13px;color:#e94560">🚨 <strong>'+outCount+' listing(s) out of stock on Amazon</strong> — pause or end these listings immediately to avoid defects.</div>';
+    if(alertCount)summary+='<div style="background:#2a1800;border:1px solid #f5a623;border-radius:6px;padding:10px;margin-bottom:10px;font-size:13px;color:#f5a623">⚠️ <strong>'+alertCount+' listing(s) have price alerts</strong> — Amazon cost may have risen above your margin.</div>';
+    results.innerHTML=summary+'<table style="width:100%;border-collapse:collapse;font-size:13px">'
+      +'<thead><tr style="color:#4ecca3;border-bottom:1px solid #16213e"><th style="text-align:left;padding:8px">Listing</th><th style="padding:8px">Amazon $</th><th style="padding:8px">eBay $</th><th style="padding:8px">Stock</th><th style="padding:8px">Action</th></tr></thead><tbody>'
+      +d.results.map(r=>{
+        const stockIcon=r.inStock===true?'✅ In Stock':r.inStock===false?'🚨 OUT':'❓ Unknown';
+        const stockColor=r.inStock===true?'#4ecca3':r.inStock===false?'#e94560':'#aaa';
+        const priceAlert=r.priceAlert?'<br><span style="color:#f5a623;font-size:11px">⚠️ Price alert</span>':'';
+        const action=r.inStock===false?'<button onclick="deleteListing(\''+r.sku+'\',\''+r.offerId+'\',\'PUBLISHED\')" style="background:#16213e;border:1px solid #e94560;color:#e94560;padding:3px 10px;border-radius:4px;cursor:pointer;font-size:11px">End Listing</button>':'<span style="color:#555;font-size:11px">OK</span>';
+        return'<tr style="border-bottom:1px solid #16213e">'
+          +'<td style="padding:8px;max-width:220px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+r.title+'</td>'
+          +'<td style="padding:8px;text-align:center">'+(r.amazonPrice?'$'+r.amazonPrice.toFixed(2):'—')+'</td>'
+          +'<td style="padding:8px;text-align:center">'+(r.ebayPrice?'$'+r.ebayPrice:'—')+'</td>'
+          +'<td style="padding:8px;text-align:center;color:'+stockColor+'">'+stockIcon+priceAlert+'</td>'
+          +'<td style="padding:8px;text-align:center">'+action+'</td>'
+          +'</tr>';
+      }).join('')+'</tbody></table>';
+    renderAsinTable();
+  }catch(e){status.style.display='none';results.innerHTML='<p style="color:#e94560;font-size:13px">Error: '+e.message+'</p>';}
+}
+
+// ── Better Descriptions ───────────────────────────────────
+function generateHTMLDesc(){
+  const title=document.getElementById('title').value.trim();
+  const raw=document.getElementById('description').value.trim();
+  if(!title){alert('Enter a title first.');return;}
+  // Parse existing plain-text description into feature lines
+  const lines=raw.split('\n').map(l=>l.replace(/^[✅🏪•\-*]+\s*/,'').trim()).filter(l=>l.length>5&&!l.includes('Justice Den')&&!l.includes('Fast US')&&!l.includes('30-day'));
+  const bullets=lines.slice(0,6).map(l=>'<li style="padding:5px 0;border-bottom:1px solid #eee;margin:0">'+l+'</li>').join('');
+  const featureBlock=bullets
+    ?'<h3 style="color:#1a1a2e;font-size:15px;margin:20px 0 8px 0">📋 Product Details</h3><ul style="padding-left:0;list-style:none;margin:0 0 16px 0">'+bullets+'</ul>'
+    :'';
+  const html='<div style="font-family:Arial,sans-serif;max-width:680px;margin:0 auto;color:#333;line-height:1.6">'
+    +'<h2 style="color:#c41230;border-bottom:3px solid #c41230;padding-bottom:10px;font-size:18px;margin-top:0">'+title+'</h2>'
+    +'<div style="background:#f8f9ff;border-left:4px solid #c41230;padding:14px 18px;margin:16px 0;border-radius:0 8px 8px 0">'
+    +'<h3 style="margin:0 0 10px 0;color:#1a1a2e;font-size:14px">🛡️ Why Shop With Justice Den?</h3>'
+    +'<table style="width:100%;border-collapse:collapse"><tr>'
+    +'<td style="padding:4px 6px">🚚</td><td style="padding:4px">Fast US Shipping</td>'
+    +'<td style="padding:4px 6px">📦</td><td style="padding:4px">Brand New &amp; Sealed</td>'
+    +'</tr><tr>'
+    +'<td style="padding:4px 6px">🔄</td><td style="padding:4px">30-Day Returns</td>'
+    +'<td style="padding:4px 6px">⭐</td><td style="padding:4px">Top-Rated Seller</td>'
+    +'</tr></table></div>'
+    +featureBlock
+    +'<div style="background:#1a1a2e;color:white;padding:16px;border-radius:8px;text-align:center;margin-top:20px">'
+    +'<div style="font-size:17px;font-weight:bold;color:#e94560">🏪 Justice Den</div>'
+    +'<div style="font-size:12px;color:#aaa;margin-top:4px">Quality you can trust &nbsp;·&nbsp; Prices you\'ll love</div>'
+    +'<div style="font-size:11px;color:#555;margin-top:6px">Questions? Message us — we respond within 24 hours</div>'
+    +'</div></div>';
+  document.getElementById('description').value=html;
+  document.getElementById('desc-notice').style.display='block';
+}
+
+// ── Quick Reprice ─────────────────────────────────────────
+async function quickReprice(sku,offerId,currentPrice){
+  const newPrice=prompt('New price for this listing (current: $'+currentPrice+'):',currentPrice);
+  if(!newPrice||isNaN(parseFloat(newPrice)))return;
+  const p=parseFloat(newPrice).toFixed(2);
+  try{
+    const res=await fetch('/api/quick-reprice',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({sku,offerId,price:p})});
+    const data=await res.json();
+    if(data.success){loadMyListings();loadDashboardStats();alert('✅ Price updated to $'+p+' on eBay!');}
+    else{alert('Error: '+(data.error||'Unknown'));}
+  }catch(e){alert('Error: '+e.message);}
+}
+
+// ── ASIN Backfill ─────────────────────────────────────────
+async function backfillAsins(){
+  const status=document.getElementById('price-watch-status');
+  const asinTable=document.getElementById('asin-table');
+  status.style.display='block';
+  status.textContent='🔍 Searching Amazon for your listing ASINs... this may take a minute.';
+  asinTable.style.display='none';
+  try{
+    const res=await fetch('/api/backfill-asins',{method:'POST'});
+    const data=await res.json();
+    if(data.error){status.textContent='❌ '+data.error;return;}
+    if(data.message){status.textContent='✅ '+data.message;renderAsinTable();return;}
+    const found=data.results.filter(r=>r.found).length;
+    status.textContent='✅ Found ASINs for '+found+' of '+data.total+' listings.'+(data.total-found>0?' Enter missing ones manually below.':'');
+    renderAsinTable();
+  }catch(e){status.textContent='❌ Error: '+e.message;}
+}
+async function setAsinManual(sku,inputId){
+  const asin=document.getElementById(inputId).value.trim().toUpperCase();
+  if(!asin||asin.length!==10){alert('Enter a valid 10-character ASIN (e.g. B09B93ZDG4).');return;}
+  const res=await fetch('/api/set-asin',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({sku,asin})});
+  const data=await res.json();
+  if(data.success){renderAsinTable();document.getElementById('price-watch-status').textContent='✅ ASIN saved for '+sku;}
+  else{alert('Error: '+data.error);}
+}
+async function renderAsinTable(){
+  const asinTable=document.getElementById('asin-table');
+  const res=await fetch('/api/local-listings');
+  const data=await res.json();
+  const listings=data.listings||[];
+  const untracked=listings.filter(l=>!l.asin&&l.status==='PUBLISHED');
+  const tracked=listings.filter(l=>l.asin&&l.status==='PUBLISHED');
+  let html='';
+  if(tracked.length){
+    html+='<div style="font-size:12px;color:#4ecca3;margin-bottom:8px">✅ '+tracked.length+' listing(s) tracked — click <strong>Check Amazon Prices</strong> to run price watch.</div>';
+  }
+  if(untracked.length){
+    html+='<div style="font-size:12px;color:#f5a623;margin-bottom:8px;font-weight:bold">⚠️ '+untracked.length+' listing(s) need an ASIN — paste it from the Amazon product URL:</div>';
+    html+='<table style="width:100%;border-collapse:collapse;font-size:12px">'
+      +'<thead><tr style="color:#aaa;border-bottom:1px solid #16213e">'
+      +'<th style="text-align:left;padding:6px">Listing</th>'
+      +'<th style="padding:6px;width:220px">ASIN (10 chars from Amazon URL)</th>'
+      +'</tr></thead><tbody>'
+      +untracked.map(function(l,i){
+        const inputId='asin-input-'+i;
+        return'<tr style="border-bottom:1px solid #16213e">'
+          +'<td style="padding:6px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:300px">'+l.title+'</td>'
+          +'<td style="padding:6px"><div style="display:flex;gap:6px">'
+          +'<input id="'+inputId+'" type="text" maxlength="10" placeholder="B09B93ZDG4" style="flex:1;padding:5px 8px;background:#1a1a2e;border:1px solid #333;border-radius:4px;color:#eee;font-size:12px;font-family:monospace"/>'
+          +'<button onclick="setAsinManual(\''+l.sku+'\',\''+inputId+'\')" style="background:#16213e;border:1px solid #f5a623;color:#f5a623;padding:4px 10px;border-radius:4px;cursor:pointer;font-size:11px;white-space:nowrap">Save</button>'
+          +'</div></td></tr>';
+      }).join('')
+      +'</tbody></table>';
+  }
+  asinTable.innerHTML=html;
+  asinTable.style.display=html?'block':'none';
+}
+
+// ── Price Watch ───────────────────────────────────────────
+async function runPriceWatch(){
+  const status=document.getElementById('price-watch-status');
+  const results=document.getElementById('price-watch-results');
+  status.style.display='block';status.textContent='⏳ Checking Amazon prices... this may take 30–60 seconds.';
+  results.innerHTML='';
+  try{
+    const res=await fetch('/api/price-watch');
+    const data=await res.json();
+    status.style.display='none';
+    if(data.noAsins){results.innerHTML='<p style="color:#aaa;font-size:13px">No ASINs linked yet — click <strong style="color:#f5a623">Find Missing ASINs</strong> above to auto-detect them, or enter them manually.</p>';renderAsinTable();return;}
+    if(data.noScraper){results.innerHTML='<p style="color:#e94560;font-size:13px">ScraperAPI key not configured — needed to fetch Amazon prices.</p>';return;}
+    if(!data.results.length){results.innerHTML='<p style="color:#aaa;font-size:13px">No results.</p>';return;}
+    const checkedAt=data.checkedAt?new Date(data.checkedAt).toLocaleTimeString():'';
+    results.innerHTML='<p style="color:#555;font-size:11px;margin-bottom:10px">Last checked: '+checkedAt+'</p>'
+      +'<table style="width:100%;border-collapse:collapse;font-size:13px">'
+      +'<thead><tr style="color:#4ecca3;border-bottom:1px solid #16213e">'
+      +'<th style="text-align:left;padding:8px">Listing</th>'
+      +'<th style="padding:8px">Amazon $</th>'
+      +'<th style="padding:8px">eBay $</th>'
+      +'<th style="padding:8px">Profit</th>'
+      +'<th style="padding:8px">Margin</th>'
+      +'<th style="padding:8px">Status</th>'
+      +'</tr></thead><tbody>'
+      +data.results.map(r=>{
+        const statusIcon=r.alert==='ok'?'✅ Healthy':r.alert==='low'?'⚠️ Low margin':r.alert==='losing'?'🚨 Losing $':r.alert==='error'?'❌ Error':'❓ Unknown';
+        const statusColor=r.alert==='ok'?'#4ecca3':r.alert==='losing'?'#e94560':'#f5a623';
+        const amazonCell=r.amazonPrice?'$'+r.amazonPrice.toFixed(2):'—';
+        const profitCell=r.profit?'<span style="color:'+(parseFloat(r.profit)>0?'#4ecca3':'#e94560')+'">$'+r.profit+'</span>':'—';
+        const marginCell=r.margin?r.margin+'%':'—';
+        const ebayLink=r.ebayUrl?'<a href="'+r.ebayUrl+'" target="_blank" style="color:#4ecca3;font-size:11px;display:block">View →</a>':'';
+        const repriceBtn=r.ebayPrice?'<button onclick="quickReprice(\''+r.sku+'\',\''+r.offerId+'\',\''+r.ebayPrice+'\')" style="background:none;border:1px solid #4ecca3;color:#4ecca3;padding:2px 8px;border-radius:4px;cursor:pointer;font-size:11px;margin-top:4px">Reprice</button>':'';
+        // Price drift badge — shown when Amazon price moved ≥5% since last check
+        const driftBadge=r.driftAlert
+          ?(r.driftPct>0
+            ?'<span style="background:#3a0a0a;color:#e94560;font-size:10px;padding:1px 5px;border-radius:3px;margin-left:4px">▲ Amazon +'+r.driftPct+'%</span>'
+            :'<span style="background:#0a1a0a;color:#4ecca3;font-size:10px;padding:1px 5px;border-radius:3px;margin-left:4px">▼ Amazon '+r.driftPct+'%</span>')
+          :'';
+        return'<tr style="border-bottom:1px solid #16213e'+(r.driftAlert&&r.driftPct>0?';background:rgba(233,69,96,0.05)':'')+(r.driftAlert&&r.driftPct<0?';background:rgba(78,204,163,0.05)':'')+'">'
+          +'<td style="padding:8px;max-width:220px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+r.title+driftBadge+'</td>'
+          +'<td style="padding:8px;text-align:center">'+amazonCell+'</td>'
+          +'<td style="padding:8px;text-align:center">'+(r.ebayPrice?'$'+r.ebayPrice:'—')+'</td>'
+          +'<td style="padding:8px;text-align:center">'+profitCell+'</td>'
+          +'<td style="padding:8px;text-align:center">'+marginCell+'</td>'
+          +'<td style="padding:8px;text-align:center;color:'+statusColor+'">'+statusIcon+'<br>'+ebayLink+repriceBtn+'</td>'
+          +'</tr>';
+      }).join('')
+      +'</tbody></table>';
+    renderAsinTable();
+  }catch(e){status.style.display='none';results.innerHTML='<p style="color:#e94560;font-size:13px">Error: '+e.message+'</p>';}
+}
+
+// ── Duplicate Detector ────────────────────────────────────
+async function checkDuplicate(title){
+  const warn=document.getElementById('dup-warning');
+  if(!title||title.length<10){warn.style.display='none';return;}
+  try{
+    const res=await fetch('/api/check-duplicate',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({title})});
+    const data=await res.json();
+    if(!data.duplicates||!data.duplicates.length){warn.style.display='none';return;}
+    const top=data.duplicates[0];
+    const extras=data.duplicates.length>1?'<span style="color:#aaa;font-size:11px;display:block;margin-top:4px">+' +(data.duplicates.length-1)+' more similar listing(s)</span>':'';
+    const link=top.ebayUrl?'<a href="'+top.ebayUrl+'" target="_blank" style="color:#4ecca3;margin-left:8px">View on eBay →</a>':'';
+    warn.style.display='block';
+    warn.innerHTML='⚠️ <strong>Possible duplicate!</strong> You may already have this listed ('+top.score+'% match):<br>'
+      +'<span style="color:#eee;font-size:12px">'+top.title+'</span>'
+      +' &nbsp;<span style="color:#4ecca3">$'+top.price+'</span>'+link+extras
+      +'<button onclick="document.getElementById(\'dup-warning\').style.display=\'none\'" '
+      +'style="float:right;background:none;border:1px solid #f5a623;color:#f5a623;padding:3px 10px;border-radius:4px;cursor:pointer;font-size:12px;margin-top:-2px">Dismiss</button>';
+  }catch(e){}
+}
+function checkDuplicateFromField(){checkDuplicate(document.getElementById('title').value.trim());}
+
+// ── Margin Presets ────────────────────────────────────────
+/**
+ * Apply a margin multiplier against the stored Amazon cost (set when
+ * a product is sent to the form from an importer). Falls back to the
+ * current price field value so presets still work if you typed a cost.
+ */
+function applyMarginPreset(mult,label){
+  const costRaw=document.getElementById('amazon-cost').value
+    ||document.getElementById('price').value;
+  const cost=parseFloat(costRaw);
+  if(!cost||cost<=0){
+    const pl=document.getElementById('price-preset-label');
+    pl.style.color='#e94560';pl.textContent='Enter a price / source cost first';
+    return;
+  }
+  const suggested=(cost*mult).toFixed(2);
+  document.getElementById('price').value=suggested;
+  const pl=document.getElementById('price-preset-label');
+  pl.style.color='#aaa';
+  pl.textContent='('+label+' '+mult+'× · cost $'+cost.toFixed(2)+' → $'+suggested+')';
+}
+
+// ── Activity Log ─────────────────────────────────────────
+async function loadActivity(){
+  const list=document.getElementById('activity-list');
+  const ld=document.getElementById('activity-loading');
+  list.innerHTML='';ld.style.display='block';
+  try{
+    const res=await fetch('/api/activity');
+    const data=await res.json();
+    ld.style.display='none';
+    const entries=(data.entries||[]).slice().reverse(); // newest first
+    if(!entries.length){list.innerHTML='<p style="color:#555;font-size:13px;text-align:center;padding:24px">No activity recorded yet — create or reprice a listing to start the log.</p>';return;}
+    const iconMap={listed:'✅',updated:'✏️',deleted:'🗑️',repricer_run:'🔄',repriced:'💰',failed:'❌'};
+    const colorMap={listed:'#4ecca3',updated:'#4ecca3',deleted:'#e94560',repricer_run:'#aaa',repriced:'#f5a623',failed:'#e94560'};
+    list.innerHTML='<table style="width:100%;border-collapse:collapse;font-size:13px">'
+      +'<thead><tr style="color:#4ecca3;border-bottom:1px solid #333">'
+      +'<th style="text-align:left;padding:8px;width:140px">Time</th>'
+      +'<th style="text-align:left;padding:8px;width:80px">Action</th>'
+      +'<th style="text-align:left;padding:8px">Details</th>'
+      +'</tr></thead><tbody>'
+      +entries.map(e=>{
+        const icon=iconMap[e.action]||'•';
+        const color=colorMap[e.action]||'#aaa';
+        const ts=new Date(e.ts).toLocaleString(undefined,{month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'});
+        let detail='';
+        if(e.action==='listed')detail='<strong style="color:#eee">'+escHtml(e.data.title||'')+'</strong>'+(e.data.price?' · $'+e.data.price:'')+(e.data.ebayUrl?' · <a href="'+escHtml(e.data.ebayUrl)+'" target="_blank" style="color:#4ecca3">View →</a>':'');
+        else if(e.action==='updated')detail='<strong style="color:#eee">'+escHtml(e.data.title||e.data.sku||'')+'</strong>'+(e.data.price?' · $'+e.data.price:'');
+        else if(e.action==='deleted')detail='SKU '+escHtml(e.data.sku||'');
+        else if(e.action==='repricer_run')detail='Checked '+escHtml(String(e.data.total||0))+' listing(s) · '+escHtml(String(e.data.repriced||0))+' repriced';
+        else if(e.action==='repriced')detail='<strong style="color:#eee">'+escHtml(e.data.sku||'')+'</strong> → $'+escHtml(String(e.data.newPrice||''));
+        else detail=JSON.stringify(e.data||{}).substring(0,80);
+        return'<tr style="border-bottom:1px solid #16213e">'
+          +'<td style="padding:8px;color:#555;font-size:11px;white-space:nowrap">'+ts+'</td>'
+          +'<td style="padding:8px;color:'+color+';white-space:nowrap">'+icon+' '+e.action+'</td>'
+          +'<td style="padding:8px;color:#aaa">'+detail+'</td>'
+          +'</tr>';
+      }).join('')
+      +'</tbody></table>';
+  }catch(err){ld.style.display='none';list.innerHTML='<p style="color:#e94560;font-size:13px">Error: '+err.message+'</p>';}
+}
+
+// ── Setup Status ──────────────────────────────────────────
+async function loadSetupStatus(){
+  try{
+    const res=await fetch('/api/setup-status');
+    const d=await res.json();
+
+    // Token status — field names: hasAccessToken, hasRefreshToken, expiresInSeconds, status
+    const ts=document.getElementById('setup-token-status');
+    const hasToken=d.token&&(d.token.hasAccessToken||d.token.hasRefreshToken);
+    const canRefresh=d.token&&d.token.hasRefreshToken;
+    const refreshBtn=document.getElementById('refresh-token-btn');
+    if(hasToken){
+      const expSecs=d.token.expiresInSeconds;
+      const exp=expSecs!=null?new Date(Date.now()+expSecs*1000):null;
+      const expired=d.token.status==='expiring_soon'&&expSecs===0;
+      const expiringSoon=d.token.status==='expiring_soon';
+      ts.innerHTML=(expired
+        ?'<span style="color:#e94560">🔴 Token expired</span>'
+        :expiringSoon
+          ?'<span style="color:#f5a623">🟡 Expiring soon · '+Math.round(expSecs/60)+' min left</span>'
+          :'<span style="color:#4ecca3">🟢 Token valid'+(exp?' · expires '+exp.toLocaleDateString():'')+'</span>')
+        +(canRefresh?'<span style="color:#4ecca3;font-size:11px;margin-left:8px">· auto-refresh ✓</span>':'')
+        +'<div style="color:#aaa;font-size:11px;margin-top:4px">'+(d.stats.total||0)+' total · '+(d.stats.published||0)+' published</div>';
+      if(refreshBtn)refreshBtn.style.display=canRefresh?'inline-block':'none';
+    }else{
+      ts.innerHTML='<span style="color:#e94560">🔴 Not connected — click Re-connect eBay</span>';
+      if(refreshBtn)refreshBtn.style.display='none';
+    }
+
+    // Env vars
+    const envEl=document.getElementById('setup-env');
+    const rows=[...(d.env.required||[]),...(d.env.optional||[])];
+    envEl.innerHTML=rows.map(v=>{
+      const ok=v.present;
+      return'<div style="display:flex;align-items:center;gap:6px;padding:4px 0">'
+        +'<span style="font-size:14px">'+(ok?'✅':'❌')+'</span>'
+        +'<span style="color:'+(ok?'#eee':'#e94560')+';font-family:monospace;font-size:12px">'+v.key+'</span>'
+        +(v.required&&!ok?'<span style="color:#e94560;font-size:10px;margin-left:auto">REQUIRED</span>':'<span style="color:#555;font-size:10px;margin-left:auto">'+(v.required?'required':'optional')+'</span>')
+        +'</div>';
+    }).join('');
+
+    // Policies — also load full policy details
+    await loadPolicies(d.policies);
+  }catch(err){
+    document.getElementById('setup-token-status').innerHTML='<span style="color:#e94560">Error loading status: '+err.message+'</span>';
+  }
+}
+
+async function refreshToken(){
+  const btn=document.getElementById('refresh-token-btn');
+  if(btn){btn.disabled=true;btn.textContent='Refreshing...';}
+  try{
+    const res=await fetch('/api/refresh-token',{method:'POST'});
+    const d=await res.json();
+    if(d.success){await loadSetupStatus();}
+    else alert('Refresh failed: '+(d.error||'Unknown error'));
+  }catch(err){
+    alert('Refresh error: '+err.message);
+  }finally{
+    if(btn){btn.disabled=false;btn.textContent='🔄 Refresh Token';}
+  }
+}
+
+async function loadPolicies(cachedArg){
+  const el=document.getElementById('setup-policies');
+  el.innerHTML='<span style="color:#aaa">Loading policies...</span>';
+  try{
+    const res=await fetch('/api/policies');
+    const d=await res.json();
+    if(d.error){el.innerHTML='<span style="color:#e94560">'+escHtml(d.error)+'</span>';return;}
+    const renderPolicyList=(label,items,activeId)=>{
+      if(!items||!items.length)return'<div style="color:#555;font-size:12px">'+label+': none found</div>';
+      return'<div style="margin-bottom:6px">'
+        +'<div style="font-size:10px;color:#aaa;text-transform:uppercase;letter-spacing:1px;margin-bottom:3px">'+label+'</div>'
+        +items.map(p=>{
+          const active=activeId&&p.policyId===activeId;
+          return'<div style="display:flex;align-items:center;gap:6px;padding:2px 0">'
+            +'<span style="color:'+(active?'#4ecca3':'#555')+';font-size:12px">'+(active?'●':'○')+'</span>'
+            +'<span style="color:'+(active?'#eee':'#aaa')+';font-size:12px">'+escHtml(p.name||p.policyId)+'</span>'
+            +'</div>';
+        }).join('')
+        +'</div>';
+    };
+    const cached=d.cached||{};
+    el.innerHTML=renderPolicyList('Payment',d.payment,cached.paymentPolicyId)
+      +renderPolicyList('Return',d.return,cached.returnPolicyId)
+      +renderPolicyList('Fulfillment',d.fulfillment,cached.fulfillmentPolicyId);
+  }catch(err){el.innerHTML='<span style="color:#e94560">Error: '+err.message+'</span>';}
+}
+
+// ── Export Queue ──────────────────────────────────────────
+function exportQueue(){
+  if(!listingQueue.length){alert('Queue is empty — nothing to export.');return;}
+  const json=JSON.stringify(listingQueue,null,2);
+  const blob=new Blob([json],{type:'application/json'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');
+  a.href=url;a.download='jd-queue-'+new Date().toISOString().slice(0,10)+'.json';
+  document.body.appendChild(a);a.click();
+  setTimeout(()=>{URL.revokeObjectURL(url);a.remove();},1000);
+}
+
+// ── Auto-End OOS ──────────────────────────────────────────
+async function autoEndOos(){
+  const status=document.getElementById('price-watch-status');
+  status.style.display='block';status.style.color='#f5a623';status.textContent='Checking Amazon stock and ending OOS listings...';
+  try{
+    const res=await fetch('/api/auto-end-oos',{method:'POST'});
+    const d=await res.json();
+    if(d.error){status.style.color='#e94560';status.textContent='Error: '+d.error;return;}
+    const ended=(d.results||[]).filter(r=>r.ended);
+    const oos=(d.results||[]).filter(r=>r.status==='out_of_stock'&&!r.ended);
+    status.style.color='#4ecca3';
+    status.textContent='Done — '+ended.length+' listing(s) ended, '+(d.results||[]).filter(r=>r.status==='ok').length+' in stock.';
+    if(ended.length>0){
+      const div=document.getElementById('price-watch-results');
+      div.innerHTML='<div style="background:#1a1a2e;border-radius:6px;padding:10px;margin-top:10px">'
+        +'<div style="color:#e94560;font-size:12px;font-weight:bold;margin-bottom:6px">🛑 Auto-ended (out of stock on Amazon):</div>'
+        +ended.map(r=>'<div style="color:#aaa;font-size:12px;padding:2px 0">'+escHtml(r.title.substring(0,60))+'</div>').join('')
+        +'</div>'+div.innerHTML;
+      loadMyListings();
+    }
+  }catch(e){status.style.color='#e94560';status.textContent='Error: '+e.message;}
+}
+
+// ── Profit Summary ────────────────────────────────────────
+async function loadProfitSummary(){
+  const ld=document.getElementById('profit-loading');
+  const err=document.getElementById('profit-error');
+  const detail=document.getElementById('profit-detail');
+  err.style.display='none';ld.style.display='block';detail.innerHTML='';
+  document.getElementById('profit-orders').textContent='—';
+  document.getElementById('profit-revenue').textContent='—';
+  document.getElementById('profit-net').textContent='—';
+  try{
+    const res=await fetch('/api/profit-summary');
+    const d=await res.json();
+    ld.style.display='none';
+    if(d.error){err.textContent=d.error;err.style.display='block';return;}
+    document.getElementById('profit-orders').textContent=d.orderCount;
+    document.getElementById('profit-revenue').textContent='$'+d.grossRevenue.toFixed(2);
+    const net=d.estimatedProfit;
+    const netEl=document.getElementById('profit-net');
+    netEl.textContent='$'+net.toFixed(2);
+    netEl.style.color=net>=0?'#4ecca3':'#e94560';
+    detail.innerHTML=
+      '<div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:12px;margin-bottom:20px">'
+      +'<div style="background:#0f3460;border-radius:8px;padding:14px;text-align:center"><div style="font-size:11px;color:#aaa;margin-bottom:4px">GROSS REVENUE</div><div style="font-size:20px;color:#4ecca3;font-weight:bold">$'+d.grossRevenue.toFixed(2)+'</div></div>'
+      +'<div style="background:#0f3460;border-radius:8px;padding:14px;text-align:center"><div style="font-size:11px;color:#aaa;margin-bottom:4px">EST. COGS</div><div style="font-size:20px;color:#f5a623;font-weight:bold">$'+d.estimatedCogs.toFixed(2)+'</div></div>'
+      +'<div style="background:#0f3460;border-radius:8px;padding:14px;text-align:center"><div style="font-size:11px;color:#aaa;margin-bottom:4px">eBay FEES (~13.25%)</div><div style="font-size:20px;color:#f5a623;font-weight:bold">$'+d.estimatedFees.toFixed(2)+'</div></div>'
+      +'<div style="background:#0f3460;border-radius:8px;padding:14px;text-align:center"><div style="font-size:11px;color:#aaa;margin-bottom:4px">MARGIN</div><div style="font-size:20px;font-weight:bold;color:'+(d.marginPct>=15?'#4ecca3':d.marginPct>=5?'#f5a623':'#e94560')+'">'+d.marginPct+'%</div></div>'
+      +'</div>'
+      +(d.byMonth&&d.byMonth.length?
+        '<h3 style="color:#e94560;font-size:14px;margin-bottom:12px">By Month</h3>'
+        +'<table style="width:100%;border-collapse:collapse;font-size:13px">'
+        +'<thead><tr style="color:#aaa;font-size:11px;text-transform:uppercase;border-bottom:1px solid #333"><th style="text-align:left;padding:6px 0">Month</th><th style="text-align:right;padding:6px 0">Orders</th><th style="text-align:right;padding:6px 0">Revenue</th></tr></thead>'
+        +'<tbody>'+d.byMonth.map(m=>'<tr style="border-bottom:1px solid #1a1a2e"><td style="padding:6px 0;color:#eee">'+m.month+'</td><td style="text-align:right;color:#aaa">'+m.orders+'</td><td style="text-align:right;color:#4ecca3">$'+m.revenue.toFixed(2)+'</td></tr>').join('')
+        +'</tbody></table>'
+        :'<div style="text-align:center;padding:30px;color:#555">No paid orders found yet.</div>')
+      +'<p style="color:#555;font-size:11px;margin-top:16px">'+escHtml(d.note||'')+'</p>';
+  }catch(e){ld.style.display='none';err.textContent='Error: '+e.message;err.style.display='block';}
+}
+
+// ── Server Health ─────────────────────────────────────────
+async function loadHealth(){
+  const el=document.getElementById('health-status');
+  if(!el)return;
+  try{
+    const d=await fetch('/api/health').then(r=>r.json());
+    const mins=m=>m>=60?Math.round(m/60)+'h':m+'m';
+    const upH=Math.floor(d.uptime/3600),upM=Math.floor((d.uptime%3600)/60);
+    el.innerHTML=
+      '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">'
+      +'<div><span style="color:#555">Uptime</span> <span style="color:#4ecca3">'+(upH?upH+'h ':'')+(upM?upM+'m':d.uptime+'s')+'</span></div>'
+      +'<div><span style="color:#555">Heap</span> <span style="color:#4ecca3">'+d.mem.heapUsedMb+' MB</span></div>'
+      +'<div><span style="color:#555">Listings</span> <span style="color:#eee">'+d.db.listings+' total / '+d.db.published+' published</span></div>'
+      +'<div><span style="color:#555">Price history</span> <span style="color:#eee">'+d.db.priceHistory+' rows</span></div>'
+      +'<div><span style="color:#555">Token</span> <span style="color:'+(d.token.hasAccessToken?'#4ecca3':'#e94560')+'">'+(d.token.hasAccessToken?'✓ connected':'✗ not connected')+'</span></div>'
+      +'<div><span style="color:#555">Expires in</span> <span style="color:'+(d.token.expiresInSeconds>600?'#4ecca3':'#f5a623')+'">'+(d.token.expiresInSeconds!=null?Math.round(d.token.expiresInSeconds/60)+'m':'n/a')+'</span></div>'
+      +'<div><span style="color:#555">Repricer</span> <span style="color:#aaa">every '+mins(d.scheduler.repricer.intervalMinutes)+'</span></div>'
+      +'<div><span style="color:#555">Stock/Price check</span> <span style="color:#aaa">every '+mins(d.scheduler.stockCheck.intervalMinutes)+'</span></div>'
+      +'</div>';
+  }catch(e){el.textContent='Error: '+e.message;el.style.color='#e94560';}
+}
+
+// ── Init ──────────────────────────────────────────────────
+renderQueue();
+loadDashboardStats();
+loadRepricerSettings();
+refreshListedAsins();
+loadBlocklist();
+</script>
+</body>
+</html>

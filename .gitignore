@@ -1,0 +1,23 @@
+# Dependencies
+node_modules/
+
+# Environment & secrets
+.env
+tokens.txt
+
+# Database (local state)
+jd.db
+jd.db-wal
+jd.db-shm
+
+# Legacy JSON data files (migrated to SQLite on first run)
+listings.json
+activity.json
+images.json
+
+# Generated / cached
+policy-ids.json
+
+# Logs
+*.log
+*.bak
