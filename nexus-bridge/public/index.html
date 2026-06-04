@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Nexus Bridge</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header>
+    <div class="logo">&#9889; Nexus Bridge</div>
+    <span class="tagline">Drop files — grab them anywhere</span>
+  </header>
+
+  <main>
+    <!-- Upload zone -->
+    <section class="card upload-card">
+      <div id="dropzone" class="dropzone">
+        <div class="dz-icon">&#128228;</div>
+        <p class="dz-text">Drag &amp; drop files here</p>
+        <p class="dz-sub">or</p>
+        <label class="btn-primary" for="file-input">Choose Files</label>
+        <input type="file" id="file-input" multiple hidden />
+      </div>
+
+      <div id="queue" class="queue hidden"></div>
+
+      <div id="progress-wrap" class="progress-wrap hidden">
+        <div id="progress-bar" class="progress-bar"></div>
+        <span id="progress-label" class="progress-label">0%</span>
+      </div>
+
+      <button id="upload-btn" class="btn-upload hidden">Upload</button>
+      <div id="upload-status" class="status-msg"></div>
+    </section>
+
+    <!-- File list -->
+    <section class="card files-card">
+      <div class="files-header">
+        <h2>Stored Files</h2>
+        <button id="refresh-btn" class="btn-icon" title="Refresh">&#8635;</button>
+      </div>
+      <div id="file-list" class="file-list">
+        <p class="empty-state">Loading&#8230;</p>
+      </div>
+    </section>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>

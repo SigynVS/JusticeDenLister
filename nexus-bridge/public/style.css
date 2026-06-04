@@ -1,0 +1,285 @@
+/* ── Reset & base ── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg:          #0f1117;
+  --surface:     #1a1d27;
+  --surface2:    #22263a;
+  --accent:      #7c6af7;
+  --accent-glow: rgba(124, 106, 247, 0.35);
+  --text:        #e2e4f0;
+  --muted:       #6b7080;
+  --danger:      #e05c5c;
+  --success:     #4ade80;
+  --border:      rgba(255,255,255,0.07);
+  --radius:      14px;
+  --shadow:      0 8px 32px rgba(0,0,0,0.45);
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  padding: 0 16px 40px;
+}
+
+/* ── Header ── */
+header {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  padding: 28px 0 20px;
+}
+
+.logo {
+  font-size: 1.6rem;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+  color: var(--accent);
+}
+
+.tagline {
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+
+/* ── Layout ── */
+main {
+  max-width: 680px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 24px;
+  box-shadow: var(--shadow);
+}
+
+/* ── Drop zone ── */
+.dropzone {
+  border: 2px dashed var(--border);
+  border-radius: 10px;
+  padding: 36px 20px;
+  text-align: center;
+  cursor: pointer;
+  transition: border-color 0.2s, background 0.2s;
+}
+
+.dropzone.dragover {
+  border-color: var(--accent);
+  background: rgba(124, 106, 247, 0.08);
+}
+
+.dz-icon { font-size: 2.4rem; margin-bottom: 10px; }
+.dz-text { font-size: 1rem; font-weight: 600; margin-bottom: 4px; }
+.dz-sub  { font-size: 0.82rem; color: var(--muted); margin-bottom: 14px; }
+
+/* ── Buttons ── */
+.btn-primary {
+  display: inline-block;
+  background: var(--accent);
+  color: #fff;
+  padding: 9px 22px;
+  border-radius: 8px;
+  font-size: 0.88rem;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  transition: opacity 0.15s;
+}
+.btn-primary:hover { opacity: 0.85; }
+
+.btn-upload {
+  margin-top: 16px;
+  width: 100%;
+  padding: 11px;
+  background: var(--accent);
+  color: #fff;
+  font-size: 0.95rem;
+  font-weight: 700;
+  border: none;
+  border-radius: 9px;
+  cursor: pointer;
+  transition: opacity 0.15s, box-shadow 0.15s;
+  box-shadow: 0 0 0 0 var(--accent-glow);
+}
+.btn-upload:hover {
+  opacity: 0.9;
+  box-shadow: 0 0 16px var(--accent-glow);
+}
+
+.btn-icon {
+  background: none;
+  border: 1px solid var(--border);
+  color: var(--muted);
+  padding: 4px 8px;
+  border-radius: 6px;
+  font-size: 1.1rem;
+  cursor: pointer;
+  transition: color 0.15s, border-color 0.15s;
+}
+.btn-icon:hover { color: var(--text); border-color: var(--accent); }
+
+/* ── Queue ── */
+.queue {
+  margin-top: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.queue-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--surface2);
+  border-radius: 8px;
+  padding: 9px 12px;
+  font-size: 0.85rem;
+}
+
+.queue-name { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.queue-size { color: var(--muted); white-space: nowrap; }
+
+.queue-remove {
+  background: none;
+  border: none;
+  color: var(--muted);
+  cursor: pointer;
+  font-size: 1rem;
+  padding: 0 2px;
+  line-height: 1;
+  transition: color 0.15s;
+}
+.queue-remove:hover { color: var(--danger); }
+
+/* ── Progress ── */
+.progress-wrap {
+  margin-top: 14px;
+  position: relative;
+  height: 10px;
+  background: var(--surface2);
+  border-radius: 99px;
+  overflow: hidden;
+}
+
+.progress-bar {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, var(--accent), #a78bfa);
+  border-radius: 99px;
+  transition: width 0.2s;
+}
+
+.progress-label {
+  position: absolute;
+  right: 0;
+  top: -20px;
+  font-size: 0.75rem;
+  color: var(--muted);
+}
+
+/* ── Status message ── */
+.status-msg {
+  margin-top: 12px;
+  font-size: 0.85rem;
+  min-height: 20px;
+  text-align: center;
+}
+.status-msg.ok    { color: var(--success); }
+.status-msg.error { color: var(--danger); }
+
+/* ── File list ── */
+.files-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+.files-header h2 {
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.file-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.empty-state {
+  color: var(--muted);
+  font-size: 0.88rem;
+  text-align: center;
+  padding: 20px 0;
+}
+
+.file-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--surface2);
+  border-radius: 8px;
+  padding: 10px 14px;
+  transition: background 0.15s;
+}
+.file-row:hover { background: rgba(255,255,255,0.05); }
+
+.file-icon { font-size: 1.2rem; flex-shrink: 0; }
+
+.file-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.file-name {
+  font-size: 0.88rem;
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.file-meta {
+  font-size: 0.75rem;
+  color: var(--muted);
+  margin-top: 2px;
+}
+
+.file-actions {
+  display: flex;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.btn-dl, .btn-del {
+  border: none;
+  border-radius: 6px;
+  padding: 6px 10px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.15s;
+}
+.btn-dl  { background: var(--accent); color: #fff; }
+.btn-del { background: rgba(224,92,92,0.15); color: var(--danger); }
+.btn-dl:hover, .btn-del:hover { opacity: 0.8; }
+
+/* ── Utilities ── */
+.hidden { display: none !important; }
+
+/* ── Mobile tweaks ── */
+@media (max-width: 480px) {
+  .logo { font-size: 1.3rem; }
+  .card { padding: 18px; }
+  .dropzone { padding: 28px 14px; }
+  .file-row { padding: 9px 10px; }
+  .btn-dl, .btn-del { padding: 5px 8px; font-size: 0.76rem; }
+}
