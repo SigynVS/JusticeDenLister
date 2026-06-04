@@ -13,7 +13,17 @@ const urls = { local: null, tunnel: null };
 
 // ── Local IP ──────────────────────────────────────────
 function getLocalIP() {
-  for (const nets of Object.values(os.networkInterfaces())) {
+  const ifaces = os.networkInterfaces();
+  // Prefer 192.168.x.x or 10.x.x.x ranges, skip Tailscale (100.x) and loopback
+  for (const [name, nets] of Object.entries(ifaces)) {
+    if (/tailscale|vpn|tun|tap/i.test(name)) continue;
+    for (const net of nets) {
+      if (net.family !== 'IPv4' || net.internal) continue;
+      if (net.address.startsWith('192.168.') || net.address.startsWith('10.')) return net.address;
+    }
+  }
+  // Fallback: any non-internal IPv4
+  for (const nets of Object.values(ifaces)) {
     for (const net of nets) {
       if (net.family === 'IPv4' && !net.internal) return net.address;
     }
