@@ -13,6 +13,27 @@
   </header>
 
   <main>
+    <!-- Connection panel — shown only inside the Electron app -->
+    <section id="bridge-panel" class="card bridge-card hidden">
+      <h2 class="panel-title">Connect from another device</h2>
+      <div class="url-grid">
+        <div class="url-row">
+          <span class="url-label">Wi-Fi (same network)</span>
+          <code id="local-url" class="url-val muted">detecting&hellip;</code>
+          <button class="btn-copy" data-target="local-url" title="Copy">&#x2398;</button>
+        </div>
+        <div class="url-row">
+          <span class="url-label">Internet (anywhere)</span>
+          <code id="tunnel-url" class="url-val muted">connecting&hellip;</code>
+          <button class="btn-copy" data-target="tunnel-url" title="Copy" disabled>&#x2398;</button>
+          <button id="tunnel-refresh" class="btn-icon" title="Reconnect tunnel">&#8635;</button>
+        </div>
+      </div>
+      <p class="tunnel-note">
+        First phone visit via the Internet URL: tap <strong>Click to Submit</strong> on the loca.lt page, then you'll land here.
+      </p>
+    </section>
+
     <!-- Upload zone -->
     <section class="card upload-card">
       <div id="dropzone" class="dropzone">
@@ -22,14 +43,11 @@
         <label class="btn-primary" for="file-input">Choose Files</label>
         <input type="file" id="file-input" multiple hidden />
       </div>
-
       <div id="queue" class="queue hidden"></div>
-
       <div id="progress-wrap" class="progress-wrap hidden">
         <div id="progress-bar" class="progress-bar"></div>
         <span id="progress-label" class="progress-label">0%</span>
       </div>
-
       <button id="upload-btn" class="btn-upload hidden">Upload</button>
       <div id="upload-status" class="status-msg"></div>
     </section>

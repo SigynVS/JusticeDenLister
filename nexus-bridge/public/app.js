@@ -199,5 +199,56 @@ function fileIcon(name) {
   return map[ext] || '📁';
 }
 
+// ── Electron bridge ────────────────────────────────────
+if (window.bridge) {
+  const panel      = document.getElementById('bridge-panel');
+  const localEl    = document.getElementById('local-url');
+  const tunnelEl   = document.getElementById('tunnel-url');
+  const copyBtns   = document.querySelectorAll('.btn-copy');
+  const tunnelRefresh = document.getElementById('tunnel-refresh');
+
+  panel.classList.remove('hidden');
+
+  window.bridge.onUrls(({ local, tunnel }) => {
+    if (local) {
+      localEl.textContent = local;
+      localEl.classList.remove('muted');
+      copyBtns[0].disabled = false;
+    }
+    if (tunnel) {
+      tunnelEl.textContent = tunnel;
+      tunnelEl.classList.remove('muted');
+      copyBtns[1].disabled = false;
+    } else if (!tunnel && tunnelEl.textContent === 'connecting…') {
+      tunnelEl.textContent = 'unavailable';
+    }
+  });
+
+  copyBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      const target = document.getElementById(btn.dataset.target);
+      navigator.clipboard.writeText(target.textContent).then(() => {
+        const orig = btn.textContent;
+        btn.textContent = '✓';
+        setTimeout(() => { btn.textContent = orig; }, 1200);
+      });
+    });
+  });
+
+  tunnelRefresh.addEventListener('click', async () => {
+    tunnelEl.textContent = 'connecting…';
+    tunnelEl.classList.add('muted');
+    copyBtns[1].disabled = true;
+    const url = await window.bridge.startTunnel();
+    if (url) {
+      tunnelEl.textContent = url;
+      tunnelEl.classList.remove('muted');
+      copyBtns[1].disabled = false;
+    } else {
+      tunnelEl.textContent = 'failed — try again';
+    }
+  });
+}
+
 // ── Init ───────────────────────────────────────────────
 loadFiles();
