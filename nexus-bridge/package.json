@@ -6,8 +6,9 @@
   "author": "Nexus Bridge",
   "license": "ISC",
   "scripts": {
-    "start": "electron .",
-    "dist":  "electron-builder --win --x64"
+    "start":    "electron .",
+    "dist":     "electron-builder --win --x64",
+    "dist:zip": "CSC_IDENTITY_AUTO_DISCOVERY=false electron-builder --win zip --x64"
   },
   "dependencies": {
     "express":     "^5.2.1",
