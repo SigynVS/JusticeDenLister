@@ -112,7 +112,10 @@ ipcMain.handle('open-external', (_, url) => shell.openExternal(url));
 
 // ── Boot ──────────────────────────────────────────────
 app.whenReady().then(async () => {
-  await startServer(PORT);
+  const uploadDir = app.isPackaged
+    ? path.join(app.getPath('userData'), 'uploads')
+    : path.join(__dirname, 'uploads');
+  await startServer(PORT, uploadDir);
   urls.local = `http://${getLocalIP()}:${PORT}`;
 
   createWindow();

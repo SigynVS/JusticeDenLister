@@ -3,16 +3,46 @@
   "version": "2.0.0",
   "description": "Cross-device file bridge — Electron desktop app with tunnel support",
   "main": "main.js",
-  "scripts": {
-    "start": "electron ."
-  },
+  "author": "Nexus Bridge",
   "license": "ISC",
+  "scripts": {
+    "start": "electron .",
+    "dist":  "electron-builder --win --x64"
+  },
   "dependencies": {
-    "express": "^5.2.1",
-    "localtunnel": "^2.0.2",
-    "multer": "^2.1.1"
+    "express":      "^5.2.1",
+    "localtunnel":  "^2.0.2",
+    "multer":       "^2.1.1"
   },
   "devDependencies": {
-    "electron": "^28.3.3"
+    "electron":         "^28.3.3",
+    "electron-builder": "^24.13.3"
+  },
+  "build": {
+    "appId":       "com.nexusbridge.app",
+    "productName": "Nexus Bridge",
+    "files": [
+      "main.js",
+      "preload.js",
+      "server.js",
+      "public/**",
+      "node_modules/**",
+      "!uploads/**",
+      "!dist/**"
+    ],
+    "win": {
+      "target": [{ "target": "nsis", "arch": ["x64"] }],
+      "icon": "public/icon.ico"
+    },
+    "nsis": {
+      "oneClick":                      false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut":         true,
+      "createStartMenuShortcut":       true,
+      "shortcutName":                  "Nexus Bridge"
+    },
+    "directories": {
+      "output": "dist"
+    }
   }
 }

@@ -5,8 +5,7 @@ const multer  = require('multer');
 const path    = require('path');
 const fs      = require('fs');
 
-const UPLOAD_DIR = path.join(__dirname, 'uploads');
-if (!fs.existsSync(UPLOAD_DIR)) fs.mkdirSync(UPLOAD_DIR, { recursive: true });
+let UPLOAD_DIR = path.join(__dirname, 'uploads');
 
 const storage = multer.diskStorage({
   destination: (_req, _file, cb) => cb(null, UPLOAD_DIR),
@@ -55,7 +54,9 @@ app.delete('/files/:filename', (req, res) => {
     : res.json({ deleted: filename }));
 });
 
-function startServer(port) {
+function startServer(port, uploadDir) {
+  if (uploadDir) UPLOAD_DIR = uploadDir;
+  if (!fs.existsSync(UPLOAD_DIR)) fs.mkdirSync(UPLOAD_DIR, { recursive: true });
   return new Promise((resolve, reject) => {
     const server = app.listen(port, '0.0.0.0', () => resolve(server));
     server.on('error', reject);
