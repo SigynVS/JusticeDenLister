@@ -6,24 +6,25 @@
   "author": "Nexus Bridge",
   "license": "ISC",
   "scripts": {
-    "start":    "electron .",
-    "dist":     "WINEARCH=win32 electron-builder --win --x64",
+    "start": "electron .",
+    "dist": "WINEARCH=win32 electron-builder --win --x64",
     "dist:zip": "CSC_IDENTITY_AUTO_DISCOVERY=false electron-builder --win zip --x64"
   },
   "dependencies": {
-    "express":     "^5.2.1",
+    "express": "^5.2.1",
     "localtunnel": "^2.0.2",
-    "multer":      "^2.1.1"
+    "multer": "^2.1.1",
+    "qrcode": "^1.5.4"
   },
   "devDependencies": {
-    "electron":         "^42.3.3",
+    "electron": "^42.3.3",
     "electron-builder": "^26.8.1"
   },
   "overrides": {
     "axios": "^1.8.4"
   },
   "build": {
-    "appId":       "com.nexusbridge.app",
+    "appId": "com.nexusbridge.app",
     "productName": "Nexus Bridge",
     "files": [
       "main.js",
@@ -35,15 +36,22 @@
       "!dist/**"
     ],
     "win": {
-      "target": [{ "target": "nsis", "arch": ["x64"] }],
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        }
+      ],
       "icon": "public/icon.ico"
     },
     "nsis": {
-      "oneClick":                           false,
+      "oneClick": false,
       "allowToChangeInstallationDirectory": true,
-      "createDesktopShortcut":              true,
-      "createStartMenuShortcut":            true,
-      "shortcutName":                       "Nexus Bridge"
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "Nexus Bridge"
     },
     "directories": {
       "output": "dist"
