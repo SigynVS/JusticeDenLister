@@ -1,5 +1,2 @@
 uploads/
-dist/*.blockmap
-dist/*.zip
-dist/builder-debug.yml
-dist/win-unpacked/
+dist/
