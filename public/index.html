@@ -45,6 +45,87 @@ textarea{height:120px;resize:vertical}
 .price-item h4{font-size:18px;color:#4ecca3}
 .template-btn{padding:8px 16px;background:#0f3460;border:1px solid #e94560;border-radius:6px;color:#e94560;cursor:pointer;font-size:13px;margin-right:8px;margin-bottom:8px}
 .template-btn:hover{background:#e94560;color:white}
+
+/* ── Chronicle UI ─────────────────────────────────────────── */
+.chron-window{background:#16213e;border:1px solid #2a3a5e;border-radius:10px;overflow:hidden;margin-bottom:20px}
+.chron-bar{background:#0f3460;padding:9px 16px;display:flex;align-items:center;gap:12px;border-bottom:2px solid #e94560}
+.chron-bar-title{color:#e94560;font-size:14px;font-weight:bold;letter-spacing:1px;flex:1}
+.chron-tabs{display:flex;gap:0;border-radius:5px;overflow:hidden;border:1px solid #333}
+.chron-tab-btn{padding:5px 16px;background:#1a1a2e;color:#aaa;border:none;cursor:pointer;font-size:11px;font-weight:bold;letter-spacing:1px;text-transform:uppercase;transition:background 0.15s}
+.chron-tab-btn.active{background:#e94560;color:white}
+.chron-overall{padding:12px 16px;border-bottom:1px solid #1a1a2e;display:flex;align-items:center;gap:12px;font-size:13px}
+.chron-overall-label{font-size:11px;color:#aaa;text-transform:uppercase;letter-spacing:1px;min-width:130px}
+.chron-prog-wrap{flex:1;background:#1a1a2e;border-radius:4px;height:10px;overflow:hidden}
+.chron-prog-fill{height:10px;border-radius:4px;background:linear-gradient(90deg,#e94560 0%,#f5a623 100%);transition:width 0.6s ease}
+.chron-prog-pct{font-size:16px;font-weight:bold;color:#e94560;min-width:38px;text-align:right}
+.chron-prog-nums{font-size:11px;color:#555;min-width:55px;text-align:right}
+.chron-grid-2{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:#1a1a2e}
+.chron-card{background:#16213e;padding:14px 16px;transition:background 0.15s;cursor:default}
+.chron-card:hover{background:#1c2a4a}
+.chron-card-header{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.chron-card-icon{width:36px;height:36px;border-radius:6px;background:#0f3460;border:1px solid #2a3a5e;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+.chron-card-name{font-size:13px;color:#eee;font-weight:bold;line-height:1.3}
+.chron-card-count{font-size:11px;color:#aaa;margin-top:1px}
+.chron-card-bar{background:#1a1a2e;border-radius:3px;height:5px;margin-bottom:5px}
+.chron-card-bar-fill{height:5px;border-radius:3px;transition:width 0.5s ease}
+.chron-card-badge{font-size:10px;font-weight:bold;color:#1a1a2e;background:#4ecca3;border-radius:3px;padding:1px 5px;display:inline-block}
+.chron-footer{padding:7px 16px;font-size:10px;color:#333;letter-spacing:1px;text-transform:uppercase;border-top:1px solid #1a1a2e}
+
+/* ── Chronicle list view ──────────────────────────────────── */
+.chron-list-header{padding:10px 14px;background:#0f3460;display:flex;align-items:center;gap:7px;flex-wrap:wrap;border-radius:8px;margin-bottom:2px}
+.chron-search{flex:1;min-width:120px;background:#1a1a2e;border:1px solid #333;border-radius:5px;padding:7px 10px;color:#eee;font-size:13px}
+.chron-search:focus{outline:none;border-color:#4ecca3}
+.chron-sort-btn{background:#1a1a2e;border:1px solid #333;color:#aaa;padding:7px 10px;border-radius:5px;font-size:11px;cursor:pointer;white-space:nowrap;font-weight:bold}
+.chron-sort-btn:hover{border-color:#4ecca3;color:#4ecca3}
+.chron-filter-btn{background:#1a1a2e;border:1px solid #333;color:#aaa;padding:7px 10px;border-radius:5px;font-size:11px;cursor:pointer;white-space:nowrap;font-weight:bold}
+.chron-filter-btn:hover{border-color:#4ecca3;color:#eee}
+.chron-filter-btn.active{background:#4ecca3;color:#1a1a2e;border-color:#4ecca3}
+.chron-list-row{display:flex;align-items:center;gap:10px;padding:10px 14px;border-bottom:1px solid #1a1a2e;cursor:pointer;transition:background 0.1s}
+.chron-list-row:hover{background:#1a2a3e}
+.chron-list-row.selected{background:#0a2030;border-left:3px solid #4ecca3;padding-left:11px}
+.chron-status-dot{width:14px;height:14px;border-radius:50%;border:2px solid;flex-shrink:0}
+.chron-status-dot.published,.chron-status-dot.active{background:#4ecca3;border-color:#4ecca3}
+.chron-status-dot.ended{background:transparent;border-color:#444}
+.chron-status-dot.other{background:transparent;border-color:#f5a623}
+.chron-row-main{flex:1;min-width:0}
+.chron-row-title{font-size:13px;color:#eee;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.chron-row-meta{font-size:11px;color:#555;margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.chron-row-right{text-align:right;flex-shrink:0;min-width:60px}
+.chron-row-price{font-size:13px;color:#4ecca3;font-weight:bold}
+.chron-row-status{font-size:9px;color:#aaa;text-transform:uppercase;letter-spacing:0.5px;margin-top:2px}
+.chron-list-empty{padding:40px;text-align:center;color:#555;font-size:13px}
+
+/* ── Chronicle detail panel ───────────────────────────────── */
+#listing-detail-panel{display:none;background:#16213e;border:1px solid #2a3a5e;border-radius:10px;margin-top:14px;overflow:hidden}
+.chron-detail-bar{background:#0f3460;padding:10px 16px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #e94560}
+.chron-breadcrumb{font-size:12px;color:#aaa;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.chron-breadcrumb a{color:#4ecca3;cursor:pointer;text-decoration:none}
+.chron-breadcrumb a:hover{text-decoration:underline}
+.chron-detail-close{background:none;border:none;color:#aaa;font-size:20px;cursor:pointer;padding:0 4px;line-height:1;flex-shrink:0}
+.chron-detail-close:hover{color:#e94560}
+.chron-detail-body{padding:16px}
+.chron-detail-title-row{display:flex;align-items:flex-start;gap:10px;margin-bottom:8px}
+.chron-detail-h2{font-size:15px;color:#eee;font-weight:bold;flex:1;line-height:1.4}
+.chron-status-badge{font-size:10px;padding:3px 8px;border-radius:10px;font-weight:bold;white-space:nowrap;flex-shrink:0;letter-spacing:0.5px}
+.chron-status-badge.published,.chron-status-badge.active{background:#0a2a1a;border:1px solid #4ecca3;color:#4ecca3}
+.chron-status-badge.ended{background:#1a1a2e;border:1px solid #444;color:#555}
+.chron-status-badge.other{background:#2a1800;border:1px solid #f5a623;color:#f5a623}
+.chron-detail-desc{font-size:12px;color:#777;margin-bottom:14px;font-style:italic;line-height:1.5;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.chron-fields{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px;padding-bottom:14px;border-bottom:1px solid #1a1a2e}
+.chron-field{display:flex;flex-direction:column;gap:3px}
+.chron-field-label{font-size:9px;color:#555;text-transform:uppercase;letter-spacing:1px}
+.chron-field-val{font-size:13px;color:#eee}
+.chron-reqs{margin-bottom:14px;padding-bottom:14px;border-bottom:1px solid #1a1a2e}
+.chron-reqs-label{font-size:9px;color:#555;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px}
+.chron-req-item{display:flex;align-items:center;gap:8px;padding:3px 0;font-size:12px}
+.chron-req-icon{width:16px;height:16px;border-radius:50%;border:2px solid;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:bold}
+.chron-req-icon.ok{border-color:#4ecca3;color:#4ecca3}
+.chron-req-icon.no{border-color:#444;color:#444}
+.chron-detail-nav{display:flex;justify-content:space-between;margin-bottom:14px;font-size:12px}
+.chron-detail-nav a{color:#4ecca3;cursor:pointer}
+.chron-detail-nav a:hover{text-decoration:underline}
+.chron-detail-nav span{color:#333}
+.chron-detail-actions{display:flex;gap:7px;flex-wrap:wrap}
 </style>
 </head>
 <body>
@@ -71,21 +152,43 @@ textarea{height:120px;resize:vertical}
 </div>
 
 <div id="dashboard" class="panel active">
+
+<!-- Chronicle window -->
+<div class="chron-window">
+  <div class="chron-bar">
+    <span class="chron-bar-title">Chronicle</span>
+    <div class="chron-tabs">
+      <button class="chron-tab-btn active" id="dt-listings" onclick="dashSwitch('listings')">LISTINGS</button>
+      <button class="chron-tab-btn" id="dt-pipeline" onclick="dashSwitch('pipeline')">PIPELINE</button>
+    </div>
+    <span style="color:#333;font-size:13px;letter-spacing:3px">◆ ×</span>
+  </div>
+  <div class="chron-overall">
+    <span class="chron-overall-label">Overall Completion</span>
+    <div class="chron-prog-wrap">
+      <div class="chron-prog-fill" id="dash-prog-fill" style="width:0%"></div>
+    </div>
+    <span class="chron-prog-pct" id="dash-prog-pct">0%</span>
+    <span class="chron-prog-nums" id="dash-prog-nums">0 / 0</span>
+  </div>
+  <div id="dt-listings-panel">
+    <div class="chron-grid-2" id="dash-status-grid">
+      <!-- populated by loadDashboardStats() -->
+    </div>
+  </div>
+  <div id="dt-pipeline-panel" style="display:none">
+    <div class="chron-grid-2" id="dash-pipeline-grid"></div>
+  </div>
+  <div class="chron-footer">LAST UPDATED: <span id="dash-last-updated">—</span></div>
+</div>
+
+<!-- Quick stats row -->
 <div class="stats">
-<div class="stat"><h3 id="dash-listings">—</h3><p>Active Listings</p></div>
-<div class="stat"><h3 id="dash-value">—</h3><p>Total Value</p></div>
-<div class="stat"><h3>justicedenco</h3><p>Store Name</p></div>
+  <div class="stat"><h3 id="dash-listings">—</h3><p>Published Listings</p></div>
+  <div class="stat"><h3 id="dash-value">—</h3><p>Total Value</p></div>
+  <div class="stat"><h3>justicedenco</h3><p>Store Name</p></div>
 </div>
-<div class="card">
-<h2>Welcome to Justice Den Lister</h2>
-<p style="color:#aaa;font-size:14px;line-height:2">
-✅ eBay API connected<br>
-✅ Walmart Importer ready<br>
-✅ Product Research ready<br>
-✅ Listing Templates loaded<br>
-✅ Profit Calculator ready
-</p>
-</div>
+
 </div>
 
 <div id="walmart" class="panel">
@@ -484,17 +587,34 @@ textarea{height:120px;resize:vertical}
 
 <div id="mylistings" class="panel">
 <div class="card">
-<h2>My Listings</h2>
-<div style="display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap">
-  <button class="btn btn-primary" onclick="loadMyListings()">Refresh (Local)</button>
-  <button onclick="syncListings()" style="background:#16213e;border:1px solid #4ecca3;color:#4ecca3;padding:8px 16px;border-radius:6px;cursor:pointer;font-size:13px">Sync with eBay</button>
-  <button onclick="cleanupUnpublished()" style="background:#16213e;border:1px solid #e94560;color:#e94560;padding:8px 16px;border-radius:6px;cursor:pointer;font-size:13px">Delete All Unpublished</button>
+<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:8px">
+  <h2 style="margin:0">My Listings</h2>
+  <div style="display:flex;gap:7px;flex-wrap:wrap">
+    <button class="btn btn-primary" onclick="loadMyListings()" style="padding:8px 16px">Refresh</button>
+    <button onclick="syncListings()" style="background:#16213e;border:1px solid #4ecca3;color:#4ecca3;padding:8px 16px;border-radius:6px;cursor:pointer;font-size:13px">Sync with eBay</button>
+    <button onclick="cleanupUnpublished()" style="background:#16213e;border:1px solid #e94560;color:#e94560;padding:8px 16px;border-radius:6px;cursor:pointer;font-size:13px">Delete Unpublished</button>
+  </div>
 </div>
-<p style="color:#555;font-size:12px;margin-bottom:10px">Refresh loads instantly from local file (0 API calls). Sync with eBay fetches live status (2 API calls).</p>
-<div id="listings-loading" style="display:none;color:#aaa;font-size:13px">Loading listings...</div>
-<div id="listings-error" style="display:none;color:#e94560;font-size:13px"></div>
+<p style="color:#555;font-size:12px;margin-bottom:12px">Refresh loads instantly from local DB (0 API calls). Sync with eBay fetches live status (2 API calls).</p>
+<div id="listings-loading" style="display:none;color:#aaa;font-size:13px;margin-bottom:8px">Loading listings...</div>
+<div id="listings-error" style="display:none;color:#e94560;font-size:13px;margin-bottom:8px"></div>
 <div id="cleanup-result" style="display:none;color:#4ecca3;font-size:13px;margin-bottom:8px"></div>
+
+<!-- Chronicle list header: search + sort + filter -->
+<div class="chron-list-header">
+  <input type="text" class="chron-search" id="ml-search" placeholder="Search listings..." oninput="filterMyListings()"/>
+  <button class="chron-sort-btn" id="ml-sort-btn" onclick="cycleSort()">Sort: Default</button>
+  <button class="chron-filter-btn active" id="ml-filter-all" onclick="setListingFilter('all')">All</button>
+  <button class="chron-filter-btn" id="ml-filter-published" onclick="setListingFilter('published')">Active</button>
+  <button class="chron-filter-btn" id="ml-filter-pending" onclick="setListingFilter('pending')">Draft</button>
+  <button class="chron-filter-btn" id="ml-filter-ended" onclick="setListingFilter('ended')">Ended</button>
+</div>
+
 <div id="listings-table"></div>
+
+<!-- Chronicle listing detail panel -->
+<div id="listing-detail-panel"></div>
+
 </div>
 
 <div class="card" style="margin-top:20px">
@@ -649,15 +769,77 @@ function safeLocalGet(key,fallback){try{const raw=localStorage.getItem(key);if(r
 function showTab(id,el){document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));document.getElementById(id).classList.add('active');el.classList.add('active');}
 function calculate(){const cost=parseFloat(document.getElementById('cost').value)||0;const sp=parseFloat(document.getElementById('sale-price').value)||0;const sh=parseFloat(document.getElementById('shipping').value)||0;const fp=parseFloat(document.getElementById('fee-pct').value)||13.25;const fee=sp*(fp/100);const profit=sp-cost-sh-fee-0.30;const margin=sp>0?((profit/sp)*100).toFixed(1):0;document.getElementById('profit-output').textContent='$'+profit.toFixed(2);document.getElementById('margin-output').textContent='Margin: '+margin+'%';document.getElementById('profit-output').style.color=profit>0?'#4ecca3':'#e94560';}
 
-// ── Dashboard ─────────────────────────────────────────────
+// ── Chronicle Dashboard ────────────────────────────────────
+function dashSwitch(tab){
+  document.getElementById('dt-listings-panel').style.display=tab==='listings'?'block':'none';
+  document.getElementById('dt-pipeline-panel').style.display=tab==='pipeline'?'block':'none';
+  document.getElementById('dt-listings').classList.toggle('active',tab==='listings');
+  document.getElementById('dt-pipeline').classList.toggle('active',tab==='pipeline');
+}
+
 async function loadDashboardStats(){
   try{
     const res=await fetch('/api/local-listings');
     const data=await res.json();
-    const pub=(data.listings||[]).filter(l=>l.status==='PUBLISHED');
-    const total=pub.reduce((s,l)=>s+(parseFloat(l.price)||0),0);
-    document.getElementById('dash-listings').textContent=pub.length;
-    document.getElementById('dash-value').textContent='$'+total.toFixed(2);
+    const listings=data.listings||[];
+    const published=listings.filter(l=>l.status==='PUBLISHED');
+    const total=listings.length;
+    const totalValue=published.reduce((s,l)=>s+(parseFloat(l.price)||0),0);
+    const asinLinked=published.filter(l=>l.asin).length;
+    const queueCount=listingQueue.length;
+    const noAsin=published.filter(l=>!l.asin).length;
+    const draft=listings.filter(l=>l.status!=='PUBLISHED'&&l.status!=='ENDED').length;
+
+    // Quick stats row
+    document.getElementById('dash-listings').textContent=published.length;
+    document.getElementById('dash-value').textContent='$'+totalValue.toFixed(2);
+    document.getElementById('dash-last-updated').textContent=new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
+
+    // Overall progress bar
+    const pct=total>0?Math.round((published.length/total)*100):0;
+    document.getElementById('dash-prog-fill').style.width=pct+'%';
+    document.getElementById('dash-prog-pct').textContent=pct+'%';
+    document.getElementById('dash-prog-nums').textContent=published.length+' / '+total;
+
+    // Listings grid cards
+    const makeCard=(icon,name,current,cap,color,sub)=>{
+      const barW=cap>0?Math.min(100,Math.round((current/cap)*100)):0;
+      const badge=(barW===100&&cap>0)?'<span class="chron-card-badge">100%</span>':'<span style="font-size:11px;color:'+color+';font-weight:bold">'+escHtml(sub||barW+'%')+'</span>';
+      return'<div class="chron-card">'
+        +'<div class="chron-card-header">'
+        +'<div class="chron-card-icon">'+icon+'</div>'
+        +'<div><div class="chron-card-name">'+name+'</div>'
+        +'<div class="chron-card-count">'+current+' / '+cap+'</div></div></div>'
+        +'<div class="chron-card-bar"><div class="chron-card-bar-fill" style="width:'+barW+'%;background:'+color+'"></div></div>'
+        +'<div style="margin-top:3px">'+badge+'</div>'
+        +'</div>';
+    };
+    const makeValueCard=(icon,name,display,color)=>{
+      return'<div class="chron-card">'
+        +'<div class="chron-card-header">'
+        +'<div class="chron-card-icon">'+icon+'</div>'
+        +'<div><div class="chron-card-name">'+name+'</div>'
+        +'<div class="chron-card-count">'+escHtml(display)+'</div></div></div>'
+        +'<div class="chron-card-bar"><div class="chron-card-bar-fill" style="width:100%;background:'+color+'"></div></div>'
+        +'</div>';
+    };
+
+    const statusGrid=document.getElementById('dash-status-grid');
+    statusGrid.innerHTML=
+      makeCard('🏪','Published Listings',published.length,Math.max(total,1),'#4ecca3',null)
+      +makeCard('📥','In Queue',queueCount,Math.max(queueCount+published.length,1),'#f5a623',queueCount+' ready')
+      +makeCard('🔗','ASIN Linked',asinLinked,Math.max(published.length,1),'#4ecca3',null)
+      +makeValueCard('💰','Total Value','$'+totalValue.toFixed(2),'#e94560');
+
+    // Pipeline grid cards
+    const avgPrice=published.length?(totalValue/published.length):0;
+    const pipelineGrid=document.getElementById('dash-pipeline-grid');
+    pipelineGrid.innerHTML=
+      makeCard('⚠️','Needs ASIN',noAsin,Math.max(published.length,1),'#f5a623',null)
+      +makeCard('📋','Draft / Pending',draft,Math.max(total,1),'#aaa',null)
+      +makeValueCard('📊','Avg Sale Price','$'+avgPrice.toFixed(2),'#4ecca3')
+      +makeCard('✅','Fully Tracked',asinLinked,Math.max(published.length,1),'#4ecca3',null);
+
   }catch(e){}
 }
 
@@ -1230,43 +1412,195 @@ async function listAllQueued(){
   if(listBtn){listBtn.disabled=false;listBtn.textContent='List All on eBay';}
 }
 
-// ── My Listings ───────────────────────────────────────────
-async function loadMyListings(){const tbl=document.getElementById('listings-table');const err=document.getElementById('listings-error');const ld=document.getElementById('listings-loading');err.style.display='none';tbl.innerHTML='';ld.style.display='block';ld.textContent='Loading from local file...';try{const res=await fetch('/api/local-listings');const data=await res.json();ld.style.display='none';const listings=data.listings||[];if(!listings.length){tbl.innerHTML='<p style="color:#aaa;font-size:13px">No listings yet.</p>';return;}renderListingsTable(listings,'local');}catch(e){ld.style.display='none';err.textContent='Error: '+e.message;err.style.display='block';}}
-async function syncListings(){const tbl=document.getElementById('listings-table');const err=document.getElementById('listings-error');const ld=document.getElementById('listings-loading');err.style.display='none';tbl.innerHTML='';ld.style.display='block';ld.textContent='Syncing with eBay...';try{const res=await fetch('/api/sync-to-local',{method:'POST'});const data=await res.json();ld.style.display='none';if(data.error){err.textContent=data.error;err.style.display='block';return;}renderListingsTable(data.listings||[],'local');}catch(e){ld.style.display='none';err.textContent='Error: '+e.message;err.style.display='block';}}
-function renderListingsTable(listings,source){
-  const tbl=document.getElementById('listings-table');
-  const rows=listings.map(function(l){
-    let displayPrice,rawPrice,status,offerId,listingId;
-    if(source==='local'){
-      rawPrice=l.price||'';displayPrice='$'+rawPrice;
-      status=l.status||'PUBLISHED';offerId=l.offerId||'';listingId=l.listingId||'';
-    }else{
-      const offer=l.offer||{};
-      rawPrice=offer.pricingSummary&&offer.pricingSummary.price?offer.pricingSummary.price.value:'';
-      displayPrice=rawPrice?'$'+rawPrice:'—';
-      status=offer.status||'—';offerId=offer.offerId||'';
-      listingId=offer.listing&&offer.listing.listingId?offer.listing.listingId:null;
-    }
-    const ebayUrl=l.ebayUrl||(listingId?'https://www.ebay.com/itm/'+listingId:null);
-    const viewBtn=ebayUrl?'<a href="'+ebayUrl+'" target="_blank" style="color:#4ecca3;font-size:12px;padding:3px 6px">View</a>':'';
-    const editData=JSON.stringify({title:l.title,imageUrl:l.imageUrl||'',price:rawPrice,quantity:1,description:''});
-    const editBtn='<button onclick=\'editListing("'+l.sku+'","'+offerId+'",'+editData+')\' style="background:#16213e;border:1px solid #4ecca3;color:#4ecca3;padding:3px 10px;border-radius:4px;cursor:pointer;font-size:12px">Edit</button>';
-    const repriceBtn='<button onclick=\'quickReprice("'+l.sku+'","'+offerId+'","'+rawPrice+'")\' style="background:#16213e;border:1px solid #f5a623;color:#f5a623;padding:3px 10px;border-radius:4px;cursor:pointer;font-size:12px">Reprice</button>';
-    const deleteBtn='<button onclick=\'deleteListing("'+l.sku+'","'+offerId+'","'+status+'")\' style="background:#16213e;border:1px solid #e94560;color:#e94560;padding:3px 10px;border-radius:4px;cursor:pointer;font-size:12px">Delete</button>';
-    return'<tr style="border-bottom:1px solid #16213e">'
-      +'<td style="padding:8px;max-width:280px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+l.title+'</td>'
-      +'<td style="padding:8px;text-align:center">'+displayPrice+'</td>'
-      +'<td style="padding:8px;text-align:center;color:'+(status==='PUBLISHED'?'#4ecca3':'#aaa')+'">'+status+'</td>'
-      +'<td style="padding:8px;text-align:center"><div style="display:flex;gap:4px;justify-content:center;flex-wrap:wrap">'+viewBtn+editBtn+repriceBtn+deleteBtn+'</div></td>'
-      +'</tr>';
+// ── My Listings — Chronicle UI ────────────────────────────
+let mlAllListings=[];
+let mlFilter='all';
+let mlSortIdx=0;
+let mlCurrentIndex=-1;
+const ML_SORTS=['default','title','price-asc','price-desc','status'];
+const ML_SORT_LABELS={default:'Sort: Default',title:'Sort: Name','price-asc':'Sort: Price ↑','price-desc':'Sort: Price ↓',status:'Sort: Status'};
+
+function setListingFilter(f){
+  mlFilter=f;
+  ['all','published','pending','ended'].forEach(id=>{
+    const btn=document.getElementById('ml-filter-'+id);
+    if(btn)btn.classList.toggle('active',id===f);
   });
-  tbl.innerHTML='<table style="width:100%;border-collapse:collapse;font-size:13px">'
-    +'<thead><tr style="color:#4ecca3;border-bottom:1px solid #16213e">'
-    +'<th style="text-align:left;padding:8px">Title</th>'
-    +'<th style="padding:8px">Price</th>'
-    +'<th style="padding:8px">Status</th>'
-    +'<th style="padding:8px">Actions</th>'
-    +'</tr></thead><tbody>'+rows.join('')+'</tbody></table>';
+  renderMyListingsChron();
+}
+
+function cycleSort(){
+  mlSortIdx=(mlSortIdx+1)%ML_SORTS.length;
+  const btn=document.getElementById('ml-sort-btn');
+  if(btn)btn.textContent=ML_SORT_LABELS[ML_SORTS[mlSortIdx]];
+  renderMyListingsChron();
+}
+
+function filterMyListings(){
+  renderMyListingsChron();
+}
+
+function renderMyListingsChron(){
+  const tbl=document.getElementById('listings-table');
+  const q=(document.getElementById('ml-search')||{}).value||'';
+  const sort=ML_SORTS[mlSortIdx];
+  let listings=[...mlAllListings];
+
+  // filter by status bucket
+  if(mlFilter==='published') listings=listings.filter(l=>l.status==='PUBLISHED');
+  else if(mlFilter==='pending') listings=listings.filter(l=>l.status!=='PUBLISHED'&&l.status!=='ENDED');
+  else if(mlFilter==='ended') listings=listings.filter(l=>l.status==='ENDED');
+
+  // search filter
+  if(q){
+    const ql=q.toLowerCase();
+    listings=listings.filter(l=>(l.title||'').toLowerCase().includes(ql)||(l.sku||'').toLowerCase().includes(ql));
+  }
+
+  // sort
+  if(sort==='title') listings.sort((a,b)=>(a.title||'').localeCompare(b.title||''));
+  else if(sort==='price-asc') listings.sort((a,b)=>(parseFloat(a.price)||0)-(parseFloat(b.price)||0));
+  else if(sort==='price-desc') listings.sort((a,b)=>(parseFloat(b.price)||0)-(parseFloat(a.price)||0));
+  else if(sort==='status') listings.sort((a,b)=>(a.status||'').localeCompare(b.status||''));
+
+  window._mlFiltered=listings;
+
+  if(!listings.length){
+    tbl.innerHTML='<div class="chron-list-empty">'+(q||mlFilter!=='all'?'No listings match your search or filter.':'No listings yet — import a product to get started.')+'</div>';
+    return;
+  }
+
+  tbl.innerHTML=listings.map((l,i)=>{
+    const status=l.status||'PUBLISHED';
+    const dotClass=status==='PUBLISHED'?'published':status==='ENDED'?'ended':'other';
+    const metaParts=[];
+    if(l.sku)metaParts.push(l.sku);
+    if(l.asin)metaParts.push('ASIN: '+l.asin);
+    else metaParts.push('No ASIN');
+    return'<div class="chron-list-row" id="ml-row-'+i+'" onclick="openListingDetail('+i+')">'
+      +'<div class="chron-status-dot '+dotClass+'"></div>'
+      +'<div class="chron-row-main">'
+      +'<div class="chron-row-title" title="'+escHtml(l.title||'')+'">'+escHtml(l.title||'(No title)')+'</div>'
+      +'<div class="chron-row-meta">'+escHtml(metaParts.join(' · '))+'</div>'
+      +'</div>'
+      +'<div class="chron-row-right">'
+      +(l.price?'<div class="chron-row-price">$'+escHtml(l.price)+'</div>':'<div class="chron-row-price" style="color:#444">—</div>')
+      +'<div class="chron-row-status">'+escHtml(status)+'</div>'
+      +'</div>'
+      +'</div>';
+  }).join('');
+}
+
+function openListingDetail(idx){
+  const listings=window._mlFiltered||mlAllListings;
+  const l=listings[idx];
+  if(!l)return;
+  mlCurrentIndex=idx;
+
+  document.querySelectorAll('.chron-list-row').forEach((r,i)=>r.classList.toggle('selected',i===idx));
+
+  const status=l.status||'PUBLISHED';
+  const statusClass=status==='PUBLISHED'?'published':status==='ENDED'?'ended':'other';
+  const badgeLabel=status==='PUBLISHED'?'ACTIVE':status;
+  const offerId=l.offerId||'';
+  const listingId=l.listingId||'';
+  const ebayUrl=l.ebayUrl||(listingId?'https://www.ebay.com/itm/'+listingId:null);
+  const hasPrev=idx>0;
+  const hasNext=idx<listings.length-1;
+
+  const reqs=[
+    {label:'Image',ok:!!(l.imageUrl)},
+    {label:'Price Set',ok:!!(l.price&&parseFloat(l.price)>0)},
+    {label:'ASIN Linked',ok:!!(l.asin)},
+    {label:'Published on eBay',ok:l.status==='PUBLISHED'},
+  ];
+
+  const descPreview=l.description?(l.description.replace(/<[^>]*>/g,' ').replace(/\s+/g,' ').trim().substring(0,140)+'…'):'';
+
+  const panel=document.getElementById('listing-detail-panel');
+  panel.style.display='block';
+  panel.innerHTML=
+    '<div class="chron-detail-bar">'
+      +'<div class="chron-breadcrumb">'
+        +'<a onclick="closeListingDetail()">My Listings</a> &rsaquo; '
+        +'<a onclick="setListingFilter(\''+statusClass+'\')">'+badgeLabel+'</a> &rsaquo; '
+        +'<span>'+escHtml((l.sku||'listing').substring(0,24))+'</span>'
+      +'</div>'
+      +'<button class="chron-detail-close" onclick="closeListingDetail()">×</button>'
+    +'</div>'
+    +'<div class="chron-detail-body">'
+      +'<div class="chron-detail-title-row">'
+        +'<div class="chron-detail-h2">'+escHtml(l.title||'')+'</div>'
+        +'<span class="chron-status-badge '+statusClass+'">'+escHtml(badgeLabel)+'</span>'
+      +'</div>'
+      +(descPreview?'<div class="chron-detail-desc">'+escHtml(descPreview)+'</div>':'')
+      +'<div class="chron-fields">'
+        +'<div class="chron-field"><span class="chron-field-label">PRICE</span><span class="chron-field-val">'+(l.price?'$'+escHtml(l.price):'—')+'</span></div>'
+        +'<div class="chron-field"><span class="chron-field-label">SKU</span><span class="chron-field-val" style="font-family:monospace;font-size:12px">'+escHtml(l.sku||'—')+'</span></div>'
+        +'<div class="chron-field"><span class="chron-field-label">ASIN</span><span class="chron-field-val" style="font-family:monospace;font-size:12px">'+escHtml(l.asin||'—')+'</span></div>'
+        +'<div class="chron-field"><span class="chron-field-label">STATUS</span><span class="chron-field-val">'+escHtml(status)+'</span></div>'
+      +'</div>'
+      +'<div class="chron-reqs">'
+        +'<div class="chron-reqs-label">REQUIREMENTS</div>'
+        +reqs.map(r=>'<div class="chron-req-item"><div class="chron-req-icon '+(r.ok?'ok':'no')+'">'+(r.ok?'✓':'')+'</div><span style="color:'+(r.ok?'#eee':'#555')+'">'+r.label+'</span></div>').join('')
+      +'</div>'
+      +'<div class="chron-detail-nav">'
+        +(hasPrev?'<a onclick="openListingDetail('+(idx-1)+')">&#8249; Previous</a>':'<span>&#8249; Previous</span>')
+        +(hasNext?'<a onclick="openListingDetail('+(idx+1)+')">Next &#8250;</a>':'<span>Next &#8250;</span>')
+      +'</div>'
+      +'<div class="chron-detail-actions">'
+        +(ebayUrl?'<a href="'+escHtml(ebayUrl)+'" target="_blank" style="background:#0f3460;border:1px solid #4ecca3;color:#4ecca3;padding:7px 14px;border-radius:6px;text-decoration:none;font-size:12px">View on eBay &#8250;</a>':'')
+        +'<button onclick=\'editListing("'+escHtml(l.sku||'')+'","'+escHtml(offerId)+'",'+JSON.stringify({title:l.title||'',imageUrl:l.imageUrl||'',price:l.price||'',quantity:1,description:''})+');\' style="background:#16213e;border:1px solid #4ecca3;color:#4ecca3;padding:7px 14px;border-radius:6px;cursor:pointer;font-size:12px">Edit</button>'
+        +'<button onclick=\'quickReprice("'+escHtml(l.sku||'')+'","'+escHtml(offerId)+'","'+escHtml(l.price||'')+'")\' style="background:#16213e;border:1px solid #f5a623;color:#f5a623;padding:7px 14px;border-radius:6px;cursor:pointer;font-size:12px">Reprice</button>'
+        +'<button onclick=\'deleteListing("'+escHtml(l.sku||'')+'","'+escHtml(offerId)+'","'+escHtml(status)+'")\' style="background:#16213e;border:1px solid #e94560;color:#e94560;padding:7px 14px;border-radius:6px;cursor:pointer;font-size:12px">Delete</button>'
+      +'</div>'
+    +'</div>';
+
+  panel.scrollIntoView({behavior:'smooth',block:'nearest'});
+}
+
+function closeListingDetail(){
+  const panel=document.getElementById('listing-detail-panel');
+  if(panel)panel.style.display='none';
+  document.querySelectorAll('.chron-list-row').forEach(r=>r.classList.remove('selected'));
+  mlCurrentIndex=-1;
+}
+
+async function loadMyListings(){
+  const tbl=document.getElementById('listings-table');
+  const err=document.getElementById('listings-error');
+  const ld=document.getElementById('listings-loading');
+  err.style.display='none';tbl.innerHTML='';ld.style.display='block';ld.textContent='Loading listings...';
+  try{
+    const res=await fetch('/api/local-listings');
+    const data=await res.json();
+    ld.style.display='none';
+    mlAllListings=data.listings||[];
+    closeListingDetail();
+    renderMyListingsChron();
+  }catch(e){ld.style.display='none';err.textContent='Error: '+e.message;err.style.display='block';}
+}
+
+async function syncListings(){
+  const tbl=document.getElementById('listings-table');
+  const err=document.getElementById('listings-error');
+  const ld=document.getElementById('listings-loading');
+  err.style.display='none';tbl.innerHTML='';ld.style.display='block';ld.textContent='Syncing with eBay...';
+  try{
+    const res=await fetch('/api/sync-to-local',{method:'POST'});
+    const data=await res.json();
+    ld.style.display='none';
+    if(data.error){err.textContent=data.error;err.style.display='block';return;}
+    mlAllListings=data.listings||[];
+    closeListingDetail();
+    renderMyListingsChron();
+  }catch(e){ld.style.display='none';err.textContent='Error: '+e.message;err.style.display='block';}
+}
+
+function renderListingsTable(listings){
+  mlAllListings=listings;
+  closeListingDetail();
+  renderMyListingsChron();
 }
 
 // ── Product Finder ────────────────────────────────────────
